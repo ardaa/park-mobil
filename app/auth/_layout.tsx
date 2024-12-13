@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
-import '../i18n/config';
 
-export default function RootLayout() {
+export default function AuthLayout() {
   return (
     <Stack screenOptions={{
       headerShown: false,
+      animation: "slide_from_right",
     }} />
   );
-}
+} 

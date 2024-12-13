@@ -1,0 +1,175 @@
+{
+  "welcome": {
+    "features": {
+      "smartParking": "Smart Parking",
+      "realTimeInfo": "Real-Time Info",
+      "navigation": "Navigation",
+      "availability": "Availability",
+      "easyPayment": "Easy Payment",
+      "timeSaving": "Time Saving",
+      "convenient": "Convenient",
+      "secure": "Secure",
+      "nearbySpots": "Nearby Spots"
+    },
+    "brand": "Parket.",
+    "login": "Login",
+    "signup": "Create Account"
+  },
+  "auth": {
+    "login": {
+      "title": "Log in to Parket",
+      "email": "Email",
+      "emailPlaceholder": "hello@company.com",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "forgotPassword": "Forgot Password?",
+      "loginButton": "Login",
+      "or": "OR",
+      "continueWith": "Continue with {{provider}}"
+    },
+    "signup": {
+      "title": "Get your free account",
+      "workEmail": "Work Email",
+      "continueWithEmail": "Continue with Email",
+      "alreadyHaveAccount": "Already have an account?",
+      "loginLink": "Login"
+    }
+  },
+  "home": {
+    "greeting": "Welcome back",
+    "menu": {
+      "findParking": "Find Parking",
+      "findParkingDesc": "Search for available parking spots",
+      "activeParking": "Active Parking",
+      "activeParkingDesc": "View your current parking session",
+      "payment": "Payment",
+      "paymentDesc": "Manage your payment methods",
+      "favorites": "Favorites",
+      "favoritesDesc": "Your saved parking locations",
+      "history": "History",
+      "historyDesc": "View your parking history",
+      "help": "Help & Support",
+      "helpDesc": "Get assistance and FAQs"
+    }
+  },
+
+    "findParking": {
+      "title": "Find Parking",
+      "searchPlaceholder": "Search for parking locations...",
+      "nearbySpots": "Nearby Parking Spots",
+      "spotsAvailable": "spots available",
+      "hour": "hour",
+      "parkingNames": {
+        "central": "Central Station Parking",
+        "mall": "Shopping Mall Garage",
+        "square": "City Square Parking",
+        "avenue": "Park Avenue Garage"
+      }
+    },
+    "activeParking": {
+      "title": "Active Parking",
+      "noActiveParking": "You don't have any active parking sessions",
+      "timeElapsed": "Time Elapsed",
+      "currentCost": "Current Cost",
+      "extend": "Extend Parking Time",
+      "end": "End Parking Session"
+    },
+
+    "favorites": {
+      "title": "Favorite Locations",
+      "noFavorites": "You haven't saved any favorite parking locations yet"
+    },
+    "history": {
+      "title": "Parking History",
+      "noHistory": "No parking history available"
+    },
+    "help": {
+      "title": "Help & Support",
+      "faqTitle": "Frequently Asked Questions",
+      "contactSupport": "Contact Support"
+    },
+    "payment": {
+        "title": "Payment Methods",
+        "addCard": "Add New Card",
+        "noPaymentMethods": "No payment methods added",
+        "wallet": {
+          "balance": "Wallet Balance",
+          "topup": "Top Up Wallet",
+          "insufficient": "Insufficient Balance"
+        },
+        "methods": {
+          "title": "Payment Methods",
+          "addNew": "Add New Card",
+          "expires": "Expires",
+          "default": "Default"
+        },
+        "autopay": {
+            "title": "Automatic Top-up",
+            "topupWhen": "Top up my wallet when balance falls below:",
+            "belowAmount": "Below ₺{{amount}}",
+            "topupAmount": "Add ₺{{amount}}",
+            "description": "Your wallet will be automatically topped up using your default payment method when your balance falls below the selected amount.",
+            "currentSetting": "Your wallet will be automatically topped up with {{amount}} when the balance falls below {{threshold}}."
+          },
+        "transactions": {
+          "title": "Recent Transactions",
+          "topup": "Wallet Top-up",
+          "parking": "Parking Payment",
+          "empty": "No recent transactions"
+        },
+        "addCard": {
+          "title": "Add New Card",
+          "useMasterpass": "Continue with Masterpass",
+          "or": "OR",
+          "cardNumber": "Card Number",
+          "expiry": "Expiry Date",
+          "cvv": "CVV",
+          "cardholderName": "Cardholder Name",
+          "cardholderNamePlaceholder": "Name on card",
+          "addCard": "Add Card",
+          "enterOtp": "Enter Verification Code",
+          "otpDescription": "We've sent a verification code to your registered phone number",
+          "verify": "Verify Card",
+          "resendOtp": "Resend Code",
+          "success": "Card added successfully",
+          "error": "Failed to add card",
+          "masterpass": {
+            "title": "Masterpass",
+            "enterOtp": "Enter Masterpass Code",
+            "otpDescription": "Please enter the verification code sent to your phone number registered with Masterpass",
+            "verifyOtp": "Verify Code",
+            "resendOtp": "Resend Code",
+            "connecting": "Connecting to Masterpass...",
+            "selectCard": "Select a card to add",
+            "error": "Could not connect to Masterpass"
+          },
+          "processing": "Processing...",
+          "verifying": "Verifying...",
+          "success": "Card Added Successfully",
+          "successMessage": "Your card has been successfully added to your payment methods",
+          "ok": "OK"
+        },
+        "topup": {
+          "title": "Top Up Wallet",
+          "quickAmount": "Quick Amount",
+          "customAmount": "Custom Amount",
+          "selectCard": "Select Payment Method",
+          "confirm": "Top Up {{amount}}",
+          "success": "Wallet Topped Up",
+          "successMessage": "Your wallet has been successfully topped up with {{amount}}",
+          "processing": "Processing payment...",
+          "ok": "OK"
+        },
+        "cardDetails": {
+          "title": "Card Details",
+          "makeDefault": "Make Default Card",
+          "removeCard": "Remove Card",
+          "removeTitle": "Remove Card",
+          "removeMessage": "Are you sure you want to remove this card? This action cannot be undone.",
+          "cancel": "Cancel",
+          "remove": "Remove",
+          "info": "This card will be used for all your future payments unless you select a different payment method."
+        }
+      }
+  
+} 

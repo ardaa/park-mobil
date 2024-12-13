@@ -1,0 +1,155 @@
+{
+  "welcome": {
+    "features": {
+      "smartParking": "Akıllı Park",
+      "realTimeInfo": "Anlık Bilgi",
+      "navigation": "Navigasyon",
+      "availability": "Uygunluk",
+      "easyPayment": "Kolay Ödeme",
+      "timeSaving": "Zaman Tasarrufu",
+      "convenient": "Kullanışlı",
+      "secure": "Güvenli",
+      "nearbySpots": "Yakın Noktalar"
+    },
+    "brand": "Parket.",
+    "login": "Giriş Yap",
+    "signup": "Hesap Oluştur"
+  },
+  "auth": {
+    "login": {
+      "title": "Parket'e Giriş Yap",
+      "email": "E-posta",
+      "emailPlaceholder": "merhaba@sirket.com",
+      "password": "Şifre",
+      "passwordPlaceholder": "Şifreniz",
+      "forgotPassword": "Şifremi Unuttum?",
+      "loginButton": "Giriş Yap",
+      "or": "VEYA",
+      "continueWith": "{{provider}} ile devam et"
+    },
+    "signup": {
+      "title": "Ücretsiz hesap oluştur",
+      "workEmail": "İş E-postası",
+      "continueWithEmail": "E-posta ile devam et",
+      "alreadyHaveAccount": "Zaten hesabınız var mı?",
+      "loginLink": "Giriş Yap"
+    }
+  },
+ "findParking": {
+    "title": "Park Yeri Bul",
+    "searchPlaceholder": "Park yeri ara...",
+    "nearbySpots": "Yakındaki Park Yerleri",
+    "spotsAvailable": "park yeri mevcut",
+    "hour": "saat",
+    "parkingNames": {
+      "central": "Merkez İstasyon Otoparkı",
+      "mall": "AVM Otoparkı",
+      "square": "Şehir Meydanı Otoparkı",
+      "avenue": "Park Caddesi Otoparkı"
+    }
+  },
+  "activeParking": {
+    "title": "Aktif Park",
+    "noActiveParking": "Aktif park oturumunuz bulunmamaktadır",
+    "timeElapsed": "Geçen Süre",
+    "currentCost": "Mevcut Ücret",
+    "extend": "Park Süresini Uzat",
+    "end": "Park Oturumunu Sonlandır"
+  },
+  "payment": {
+    "title": "Ödeme Yöntemleri",
+    "addCard": "Yeni Kart Ekle",
+    "noPaymentMethods": "Kayıtlı ödeme yöntemi bulunmamaktadır",
+    "autopay": {
+      "title": "Otomatik Yükleme",
+      "topupWhen": "Bakiyem şu tutarın altına düştüğünde yükle:",
+      "belowAmount": "₺{{amount}} altında",
+      "topupAmount": "₺%{amount} yükle",
+      "description": "Bakiyeniz seçilen tutarın altına düştüğünde, varsayılan ödeme yönteminiz kullanılarak cüzdanınıza otomatik olarak yükleme yapılacaktır.",
+      "currentSetting": "Bakiyeniz %{threshold} altına düştüğünde otomatik olarak %{amount} yüklenecektir."
+    },
+    "addCard": {
+      "title": "Yeni Kart Ekle",
+      "useMasterpass": "Masterpass ile Devam Et",
+      "or": "VEYA",
+      "cardNumber": "Kart Numarası",
+      "expiry": "Son Kullanma Tarihi",
+      "cvv": "CVV",
+      "cardholderName": "Kart Sahibinin Adı",
+      "cardholderNamePlaceholder": "Karttaki isim",
+      "addCard": "Kartı Ekle",
+      "enterOtp": "Doğrulama Kodunu Girin",
+      "otpDescription": "Kayıtlı telefon numaranıza bir doğrulama kodu gönderdik",
+      "verify": "Kartı Doğrula",
+      "resendOtp": "Kodu Tekrar Gönder",
+      "success": "Kart başarıyla eklendi",
+      "error": "Kart eklenemedi",
+      "masterpass": {
+        "title": "Masterpass",
+        "enterOtp": "Masterpass Kodunu Girin",
+        "otpDescription": "Lütfen Masterpass'te kayıtlı telefon numaranıza gönderilen doğrulama kodunu girin",
+        "verifyOtp": "Kodu Doğrula",
+        "resendOtp": "Kodu Tekrar Gönder",
+        "connecting": "Masterpass'e bağlanılıyor...",
+        "selectCard": "Eklemek istediğiniz kartı seçin",
+        "error": "Masterpass'e bağlanılamadı"
+      },
+      "processing": "İşleniyor...",
+      "verifying": "Doğrulanıyor...",
+      "success": "Kart Başarıyla Eklendi",
+      "successMessage": "Kartınız ödeme yöntemlerinize başarıyla eklendi",
+      "ok": "Tamam"
+    },
+    "topup": {
+      "title": "Bakiye Yükle",
+      "quickAmount": "Hızlı Yükleme",
+      "customAmount": "Özel Tutar",
+      "selectCard": "Ödeme Yöntemi Seç",
+      "confirm": "%{amount} Yükle",
+      "success": "Bakiye Yüklendi",
+      "successMessage": "Cüzdanınıza %{amount} başarıyla yüklendi",
+      "processing": "Ödeme işleniyor...",
+      "ok": "Tamam"
+    },
+    "cardDetails": {
+      "title": "Kart Detayları",
+      "makeDefault": "Varsayılan Kart Yap",
+      "removeCard": "Kartı Kaldır",
+      "removeTitle": "Kartı Kaldır",
+      "removeMessage": "Bu kartı kaldırmak istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "cancel": "İptal",
+      "remove": "Kaldır",
+      "info": "Farklı bir ödeme yöntemi seçmediğiniz sürece bu kart tüm gelecek ödemeleriniz için kullanılacaktır."
+    }
+  },
+  "favorites": {
+    "title": "Favori Konumlar",
+    "noFavorites": "Henüz favori park yeri eklemediniz"
+  },
+  "history": {
+    "title": "Park Geçmişi",
+    "noHistory": "Park geçmişi bulunmamaktadır"
+  },
+  "help": {
+    "title": "Yardım & Destek",
+    "faqTitle": "Sık Sorulan Sorular",
+    "contactSupport": "Destek ile İletişime Geç"
+  },
+  "home": {
+    "greeting": "Hoş geldiniz",
+    "menu": {
+      "findParking": "Park Yeri Bul",
+      "findParkingDesc": "Yakındaki uygun park yerlerini ara",
+      "activeParking": "Aktif Park",
+      "activeParkingDesc": "Mevcut park oturumunuzu görüntüleyin ve yönetin",
+      "payment": "Ödeme Yöntemleri",
+      "paymentDesc": "Ödeme seçeneklerinizi yönetin",
+      "favorites": "Favoriler",
+      "favoritesDesc": "Kayıtlı park yerlerinize erişin",
+      "history": "Geçmiş",
+      "historyDesc": "Geçmiş park oturumlarınızı görüntüleyin",
+      "help": "Yardım & Destek",
+      "helpDesc": "Destek alın ve sık sorulan soruları görüntüleyin"
+    }
+  }
+} 
