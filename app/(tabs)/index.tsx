@@ -1,10 +1,17 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { router } from 'expo-router';
+import { ParketLogo } from "@/components/icons/ParketLogo";
+type Route = Parameters<typeof router.push>[0];
 
-const MENU_ITEMS = [
+const MENU_ITEMS: Array<{
+  icon: string;
+  title: string;
+  description: string;
+  route: Route;
+}> = [
   {
     icon: "car",
     title: "home.menu.findParking",
@@ -54,8 +61,12 @@ export default function HomeScreen() {
       />
       
       <View style={styles.header}>
-        <Text style={styles.greeting}>{t("home.greeting")}</Text>
-        <Text style={styles.name}>Baha Akdemir</Text>
+      <View style={styles.greetingContainer}>
+          <Text style={styles.greeting}>{t("home.greeting")}</Text>
+          <Text style={styles.name}>Baha Akdemir</Text>
+        </View>
+        <ParketLogo size={60} />
+        
       </View>
 
       <ScrollView 
@@ -91,7 +102,17 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 24,
-    paddingTop: 60,
+    paddingTop: 30,
+    paddingBottom: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  greetingContainer: {
+    marginTop: 30,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   greeting: {
     fontSize: 16,
@@ -150,5 +171,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     marginTop: 4,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    marginRight: 12,
   },
 }); 

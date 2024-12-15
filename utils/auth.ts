@@ -2,6 +2,32 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Google from 'expo-auth-session/providers/google';
 import { router } from 'expo-router';
 
+interface LoginResponse {
+  token: string;
+  // add other response fields as needed
+}
+
+export const loginWithEmailAndPassword = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+  // Mock login - replace with real API call later
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // Mock validation
+      if (credentials.email === 'test' && credentials.password === 'test') {
+        resolve({
+          token: 'mock-jwt-token',
+          user: {
+            id: '1',
+            email: credentials.email,
+            name: 'Test User'
+          }
+        });
+      } else {
+        reject(new Error('Invalid credentials'));
+      }
+    }, 1000); // Simulate network delay
+  });
+};
+
 export async function signInWithApple() {
   try {
     const credential = await AppleAuthentication.signInAsync({

@@ -22,8 +22,9 @@ export interface ParkingHistory {
   id: string;
   date: string;
   location: string;
-  duration: number;
+  duration: string;
   cost: number;
+  status: 'completed' | 'ongoing';
 }
 
 export interface FavoriteLocation {
@@ -61,6 +62,33 @@ export interface CardDetails {
   cvv: string;
   cardholderName: string;
 }
+
+const mockParkingHistory: ParkingHistory[] = [
+  {
+    id: '1',
+    date: '2024-03-15',
+    location: 'Taksim Meydanı Otoparkı',
+    duration: '2s 30dk',
+    cost: 125.50,
+    status: 'completed'
+  },
+  {
+    id: '2',
+    date: '2024-03-14',
+    location: 'Kadıköy İskele Otoparkı',
+    duration: '1s 45dk',
+    cost: 87.75,
+    status: 'completed'
+  },
+  {
+    id: '3',
+    date: '2024-03-14',
+    location: 'Forum İstanbul AVM',
+    duration: '3s',
+    cost: 150.00,
+    status: 'completed'
+  }
+];
 
 // API Routes and functions
 export const apiServices = {
@@ -118,18 +146,9 @@ export const apiServices = {
 
   // GET /parking/history
   getParkingHistory: async (): Promise<ParkingHistory[]> => {
-    // const response = await apiClient.get('/parking/history');
-    // return response.data;
-    
-    return [
-      {
-        id: '1',
-        date: new Date().toISOString(),
-        location: 'Downtown Parking',
-        duration: 120,
-        cost: 15.00,
-      }
-    ];
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return mockParkingHistory;
   },
 
   // GET /favorites

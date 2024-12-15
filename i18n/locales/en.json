@@ -15,6 +15,14 @@
     "login": "Login",
     "signup": "Create Account"
   },
+  "profile": {
+    "myVehicles": "My Vehicles",
+    "parkingHistory": "Parking History",
+    "settings": "Settings",
+    "helpSupport": "Help & Support",
+    "paymentMethods": "Payment Methods",
+    "logout": "Logout"
+  },
   "auth": {
     "login": {
       "title": "Log in to Parket",
@@ -25,7 +33,10 @@
       "forgotPassword": "Forgot Password?",
       "loginButton": "Login",
       "or": "OR",
-      "continueWith": "Continue with {{provider}}"
+      "continueWith": "Continue with {{provider}}",
+      "error": "Login Error",
+      "provideBothFields": "Please provide both email and password",
+      "invalidCredentials": "Invalid email or password"
     },
     "signup": {
       "title": "Get your free account",
@@ -81,7 +92,11 @@
     },
     "history": {
       "title": "Parking History",
-      "noHistory": "No parking history available"
+      "noHistory": "No parking history available",
+      "status": {
+        "completed": "Completed",
+        "ongoing": "Ongoing"
+      }
     },
     "help": {
       "title": "Help & Support",
@@ -172,4 +187,11 @@
         }
       }
   
+},
+  "settings": {
+    "language": "Language",
+    "notifications": "Notifications",
+    "privacy": "Privacy & Security",
+    "about": "About"
+  }
 } 

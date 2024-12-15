@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { router } from 'expo-router';
+import Header from "../../components/Header";
 
 const QUICK_AMOUNTS = [50, 100, 200, 500];
 
@@ -43,6 +44,7 @@ export default function TopUpScreen() {
         colors={["#1C0CCE", "#1d3461"]}
         style={StyleSheet.absoluteFill}
       />
+      <Header />
       <ScrollView style={styles.content}>
         <Text style={styles.title}>{t("payment.topup.title")}</Text>
 
@@ -58,7 +60,7 @@ export default function TopUpScreen() {
               ]}
               onPress={() => {
                 setSelectedAmount(amount);
-                setCustomAmount('');
+                setCustomAmount(amount.toString());
               }}
             >
               <Text
@@ -192,7 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FA",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    marginTop: 100,
+    marginTop: 20,
     padding: 24,
   },
   title: {

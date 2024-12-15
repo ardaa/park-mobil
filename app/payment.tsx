@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from 'expo-router';
 import { apiServices, PaymentMethod, WalletTransaction, WalletInfo } from '../lib/api-services';
+import Header from '../components/Header';
 
 export default function PaymentScreen() {
   const { t, i18n } = useTranslation();
@@ -70,10 +71,10 @@ export default function PaymentScreen() {
   };
 
   const AUTO_TOPUP_OPTIONS = [
-    { threshold: 20, amount: 50 },
-    { threshold: 50, amount: 100 },
     { threshold: 100, amount: 200 },
     { threshold: 200, amount: 500 },
+    { threshold: 200, amount: 750 },
+    { threshold: 300, amount: 1000 },
   ];
 
   const handleAddCard = () => {
@@ -119,7 +120,8 @@ export default function PaymentScreen() {
         colors={["#1C0CCE", "#1d3461"]}
         style={StyleSheet.absoluteFill}
       />
-      <ScrollView style={styles.content}>
+      <Header showBackButton={true} />
+      <ScrollView style={[styles.content, { marginTop: 20 }]}>
         <Text style={styles.title}>{t("payment.title")}</Text>
 
         {/* Wallet Section */}
@@ -207,9 +209,9 @@ export default function PaymentScreen() {
                 showsHorizontalScrollIndicator={false}
                 style={styles.thresholdOptions}
               >
-                {AUTO_TOPUP_OPTIONS.map((option) => (
+                {AUTO_TOPUP_OPTIONS.map((option, index) => (
                   <Pressable
-                    key={option.threshold}
+                    key={index}
                     style={[
                       styles.thresholdOption,
                       autoTopupThreshold === option.threshold && styles.selectedOption

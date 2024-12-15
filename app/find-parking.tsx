@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TextInput, ScrollView, Pressable } from "react-
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
+import Header from "../components/Header";
 
 const NEARBY_PARKING = [
   { id: 1, name: "Merkez İstasyon Otoparkı", distance: "0.3 km", price: "₺15/saat", available: 45 },
@@ -23,6 +24,7 @@ export default function FindParkingScreen() {
         colors={["#1C0CCE", "#1d3461"]}
         style={StyleSheet.absoluteFill}
       />
+      <Header showBackButton={true} />
       <View style={styles.content}>
         <Text style={styles.title}>{t("findParking.title")}</Text>
         
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FA",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    marginTop: 100,
+    marginTop: 20,
     padding: 24,
   },
   title: {

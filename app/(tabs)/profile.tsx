@@ -1,8 +1,38 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Button } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ProfileScreen() {
+  const { t } = useTranslation();
+  const { logout } = useAuth();
+  
+  const handleLogout = () => {
+    logout();
+  };
+
+  const navigateToVehicles = () => {
+    router.push('/vehicles');
+  };
+
+  const navigateToParkingHistory = () => {
+    router.push('/parking-history');
+  };
+
+  const navigateToPaymentMethods = () => {
+    router.push('/payment');
+  };
+
+  const navigateToSettings = () => {
+    router.push('/settings');
+  };
+
+  const navigateToSupport = () => {
+    router.push('/support');
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -20,39 +50,57 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={navigateToVehicles}
+          >
             <Ionicons name="car-outline" size={24} color="white" />
-            <Text style={styles.menuText}>My Vehicles</Text>
+            <Text style={styles.menuText}>{t('profile.myVehicles')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={navigateToParkingHistory}
+          >
             <Ionicons name="time-outline" size={24} color="white" />
-            <Text style={styles.menuText}>Parking History</Text>
+            <Text style={styles.menuText}>{t('profile.parkingHistory')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={navigateToPaymentMethods}
+          >
             <Ionicons name="card-outline" size={24} color="white" />
-            <Text style={styles.menuText}>Payment Methods</Text>
+            <Text style={styles.menuText}>{t('profile.paymentMethods')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={navigateToSettings}
+          >
             <Ionicons name="settings-outline" size={24} color="white" />
-            <Text style={styles.menuText}>Settings</Text>
+            <Text style={styles.menuText}>{t('profile.settings')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={navigateToSupport}
+          >
             <Ionicons name="help-circle-outline" size={24} color="white" />
-            <Text style={styles.menuText}>Help & Support</Text>
+            <Text style={styles.menuText}>{t('profile.helpSupport')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.logoutButton}>
-          <Text style={styles.logoutText}>Log Out</Text>
+        <TouchableOpacity 
+          style={styles.logoutButton}
+          onPress={handleLogout}
+        >
+          <Text style={styles.logoutText}>{t('profile.logout')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

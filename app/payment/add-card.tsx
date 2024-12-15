@@ -296,7 +296,6 @@ export default function AddCardScreen() {
                   </Text>
                 </View>
               )}
-
               {masterpassPhase === 'cards' && (
                 <View style={styles.cardList}>
                   <Text style={styles.cardListTitle}>

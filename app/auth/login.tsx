@@ -8,14 +8,21 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Alert,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { signInWithApple, useGoogleSignIn } from '../../utils/auth';
+import { signInWithApple, useGoogleSignIn, loginWithEmailAndPassword } from '../../utils/auth';
 import { AppleLogo } from "@/components/icons/AppleLogo";
 import { GoogleLogo } from "@/components/icons/GoogleLogo";
+import { useAuth } from '../contexts/AuthContext';
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
   const router = useRouter();
@@ -23,11 +30,29 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { handleGoogleSignIn, isReady: isGoogleReady } = useGoogleSignIn();
+  const { login } = useAuth();
 
-  const handleLogin = () => {
-    // Here you would typically handle email/password authentication
-    // For now, we'll just navigate to the tabs screen
-    router.replace("/(tabs)");
+  const handleLogin = async () => {
+    try {
+      if (!email || !password) {
+        Alert.alert(t('auth.login.error'), t('auth.login.provideBothFields'));
+        return;
+      }
+
+      const credentials: LoginCredentials = {
+        email,
+        password
+      };
+
+      const response = await loginWithEmailAndPassword(credentials);
+      login(response.token);
+      router.replace('/(tabs)');
+    } catch (error) {
+      Alert.alert(
+        t('auth.login.error'),
+        t('auth.login.invalidCredentials')
+      );
+    }
   };
 
   return (
@@ -80,7 +105,10 @@ export default function Login() {
             {t('auth.login.forgotPassword')}
           </Link>
 
-          <Pressable style={styles.loginButton} onPress={handleLogin}>
+          <Pressable 
+            style={styles.loginButton} 
+            onPress={handleLogin}
+          >
             <Text style={styles.loginButtonText}>{t('auth.login.loginButton')}</Text>
           </Pressable>
 
@@ -148,7 +176,6 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.2)",
   },
   forgotPassword: {
-    color: "#4C6EF5",
     textAlign: "right",
     fontSize: 14,
     color: "#FFF",

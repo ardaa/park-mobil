@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { apiServices, ParkingSession } from '../lib/api-services';
+import Header from "../components/Header";
 
 export default function ActiveParkingScreen() {
   const { t, i18n } = useTranslation();
@@ -31,6 +32,7 @@ export default function ActiveParkingScreen() {
         colors={["#1C0CCE", "#1d3461"]}
         style={StyleSheet.absoluteFill}
       />
+      <Header showBackButton={true} />
       <View style={styles.content}>
         <Text style={styles.title}>{t("activeParking.title")}</Text>
         
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FA",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    marginTop: 100,
+    marginTop: 20,
     padding: 24,
   },
   title: {

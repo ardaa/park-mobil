@@ -1,7 +1,18 @@
+import { useEffect } from 'react';
+import { router } from 'expo-router';
+import { useAuth } from '../contexts/AuthContext';
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function TabLayout() {
+export default function TabsLayout() {
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace('/auth/welcome-screen');
+    }
+  }, [isAuthenticated]);
+
   return (
     <Tabs
       screenOptions={{
