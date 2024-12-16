@@ -1,19 +1,27 @@
 {
   "welcome": {
     "features": {
-      "smartParking": "Akıllı Park",
-      "realTimeInfo": "Anlık Bilgi",
+      "smartParking": "Akıllı Otopark",
+      "realTimeInfo": "Gerçek Zamanlı Bilgi",
       "navigation": "Navigasyon",
-      "availability": "Uygunluk",
+      "availability": "Müsaitlik",
       "easyPayment": "Kolay Ödeme",
       "timeSaving": "Zaman Tasarrufu",
       "convenient": "Kullanışlı",
       "secure": "Güvenli",
-      "nearbySpots": "Yakın Noktalar"
+      "nearbySpots": "Yakın Otoparklar"
     },
     "brand": "Parket.",
     "login": "Giriş Yap",
     "signup": "Hesap Oluştur"
+  },
+  "profile": {
+    "myVehicles": "Araçlarım",
+    "parkingHistory": "Park Geçmişi",
+    "settings": "Ayarlar",
+    "helpSupport": "Yardım & Destek",
+    "paymentMethods": "Ödeme Yöntemleri",
+    "logout": "Çıkış Yap"
   },
   "auth": {
     "login": {
@@ -22,24 +30,44 @@
       "emailPlaceholder": "merhaba@sirket.com",
       "password": "Şifre",
       "passwordPlaceholder": "Şifreniz",
-      "forgotPassword": "Şifremi Unuttum?",
+      "forgotPassword": "Şifremi Unuttum",
       "loginButton": "Giriş Yap",
       "or": "VEYA",
-      "continueWith": "{{provider}} ile devam et"
+      "continueWith": "{{provider}} ile devam et",
+      "error": "Giriş Hatası",
+      "provideBothFields": "Lütfen e-posta ve şifre alanlarını doldurun",
+      "invalidCredentials": "Geçersiz e-posta veya şifre"
     },
     "signup": {
       "title": "Ücretsiz hesap oluştur",
       "workEmail": "İş E-postası",
-      "continueWithEmail": "E-posta ile devam et",
+      "continueWithEmail": "E-posta ile Devam Et",
       "alreadyHaveAccount": "Zaten hesabınız var mı?",
       "loginLink": "Giriş Yap"
     }
   },
- "findParking": {
+  "home": {
+    "greeting": "Tekrar hoş geldiniz",
+    "menu": {
+      "findParking": "Park Yeri Bul",
+      "findParkingDesc": "Müsait park yerlerini ara",
+      "activeParking": "Aktif Park",
+      "activeParkingDesc": "Mevcut park oturumunuzu görüntüleyin",
+      "payment": "Ödeme",
+      "paymentDesc": "Ödeme yöntemlerinizi yönetin",
+      "favorites": "Favoriler",
+      "favoritesDesc": "Kayıtlı park yerleriniz",
+      "history": "Geçmiş",
+      "historyDesc": "Park geçmişinizi görüntüleyin",
+      "help": "Yardım & Destek",
+      "helpDesc": "Destek alın ve SSS'leri görüntüleyin"
+    }
+  },
+  "findParking": {
     "title": "Park Yeri Bul",
     "searchPlaceholder": "Park yeri ara...",
     "nearbySpots": "Yakındaki Park Yerleri",
-    "spotsAvailable": "park yeri mevcut",
+    "spotsAvailable": "park yeri müsait",
     "hour": "saat",
     "parkingNames": {
       "central": "Merkez İstasyon Otoparkı",
@@ -56,17 +84,93 @@
     "extend": "Park Süresini Uzat",
     "end": "Park Oturumunu Sonlandır"
   },
+  "favorites": {
+    "title": "Favori Yerler",
+    "noFavorites": "Henüz kayıtlı park yeriniz bulunmamaktadır",
+    "findParking": "Park Yeri Bul",
+    "removeFromFavorites": "Favorilerden çıkar",
+    "addedToFavorites": "Favorilere eklendi",
+    "removedFromFavorites": "Favorilerden çıkarıldı"
+  },
+  "history": {
+    "title": "Park Geçmişi",
+    "noHistory": "Park geçmişi bulunmamaktadır",
+    "status": {
+      "completed": "Tamamlandı",
+      "ongoing": "Devam Ediyor"
+    }
+  },
+  "help": {
+    "title": "Yardım & Destek",
+    "faqTitle": "Sıkça Sorulan Sorular",
+    "contactSupport": "Destek ile İletişime Geç",
+    "liveChat": "Canlı Sohbet",
+    "liveChatDesc": "Destek ekibimizle sohbet edin",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "WhatsApp'tan mesaj gönderin",
+    "phone": "Bizi Arayın",
+    "phoneDesc": "7/24 Destek Hattı",
+    "email": "E-posta",
+    "emailDesc": "Bize e-posta gönderin",
+    "chat": {
+      "welcome": "Merhaba! Size nasıl yardımcı olabiliriz?",
+      "autoResponse": "Mesajınız için teşekkürler. Destek ekibimiz kısa süre içinde yanıt verecektir.",
+      "placeholder": "Mesajınızı yazın...",
+      "permissionDenied": "İzin Reddedildi",
+      "permissionMessage": "Fotoğraf göndermek için galerinize erişim izni gerekiyor.",
+      "imageReceived": "Görsel gönderdiğiniz için teşekkürler. Destek ekibimiz inceleyecektir.",
+      "error": "Hata",
+      "imageError": "Görsel seçiminde bir hata oluştu. Lütfen tekrar deneyin.",
+      "imageUploading": "Görsel yükleniyor...",
+      "imageSent": "Görsel gönderildi"
+    },
+    "faq": {
+      "howToPark": {
+        "question": "Park etmeye nasıl başlarım?",
+        "answer": "Uygulamayı açın, 'Park Yeri Bul'u seçin ve park yeri bulmak ve rezervasyon yapmak için ekrandaki talimatları izleyin."
+      },
+      "payment": {
+        "question": "Hangi ödeme yöntemleri kabul ediliyor?",
+        "answer": "Tüm major kredi kartları, banka kartları ve Apple Pay ile Google Pay dahil mobil ödeme yöntemlerini kabul ediyoruz."
+      },
+      "cancel": {
+        "question": "Park oturumunu nasıl iptal ederim?",
+        "answer": "Uygulamada 'Aktif Park' bölümüne gidin ve 'Park Oturumunu Sonlandır'a dokunun. Sadece kullandığınız süre için ücretlendirilirsiniz."
+      },
+      "refund": {
+        "question": "İadeler nasıl çalışır?",
+        "answer": "İadeler, iptalden sonra 3-5 iş günü içinde orijinal ödeme yönteminize otomatik olarak işlenir."
+      }
+    }
+  },
   "payment": {
     "title": "Ödeme Yöntemleri",
     "addCard": "Yeni Kart Ekle",
     "noPaymentMethods": "Kayıtlı ödeme yöntemi bulunmamaktadır",
+    "wallet": {
+      "balance": "Cüzdan Bakiyesi",
+      "topup": "Bakiye Yükle",
+      "insufficient": "Yetersiz Bakiye"
+    },
+    "methods": {
+      "title": "Ödeme Yöntemleri",
+      "addNew": "Yeni Kart Ekle",
+      "expires": "Son Kullanma",
+      "default": "Varsayılan"
+    },
     "autopay": {
       "title": "Otomatik Yükleme",
-      "topupWhen": "Bakiyem şu tutarın altına düştüğünde yükle:",
+      "topupWhen": "Bakiye şu tutarın altına düştüğünde yükle:",
       "belowAmount": "₺{{amount}} altında",
-      "topupAmount": "₺%{amount} yükle",
-      "description": "Bakiyeniz seçilen tutarın altına düştüğünde, varsayılan ödeme yönteminiz kullanılarak cüzdanınıza otomatik olarak yükleme yapılacaktır.",
-      "currentSetting": "Bakiyeniz %{threshold} altına düştüğünde otomatik olarak %{amount} yüklenecektir."
+      "topupAmount": "₺{{amount}} ekle",
+      "description": "Bakiyeniz seçilen tutarın altına düştüğünde, varsayılan ödeme yönteminiz kullanılarak cüzdanınız otomatik olarak yüklenecektir.",
+      "currentSetting": "Bakiyeniz {{threshold}} altına düştüğünde cüzdanınıza otomatik olarak {{amount}} yüklenecektir."
+    },
+    "transactions": {
+      "title": "Son İşlemler",
+      "topup": "Cüzdan Yüklemesi",
+      "parking": "Park Ödemesi",
+      "empty": "Son işlem bulunmamaktadır"
     },
     "addCard": {
       "title": "Yeni Kart Ekle",
@@ -77,7 +181,7 @@
       "cvv": "CVV",
       "cardholderName": "Kart Sahibinin Adı",
       "cardholderNamePlaceholder": "Karttaki isim",
-      "addCard": "Kartı Ekle",
+      "addCard": "Kart Ekle",
       "enterOtp": "Doğrulama Kodunu Girin",
       "otpDescription": "Kayıtlı telefon numaranıza bir doğrulama kodu gönderdik",
       "verify": "Kartı Doğrula",
@@ -91,7 +195,7 @@
         "verifyOtp": "Kodu Doğrula",
         "resendOtp": "Kodu Tekrar Gönder",
         "connecting": "Masterpass'e bağlanılıyor...",
-        "selectCard": "Eklemek istediğiniz kartı seçin",
+        "selectCard": "Eklemek için bir kart seçin",
         "error": "Masterpass'e bağlanılamadı"
       },
       "processing": "İşleniyor...",
@@ -102,17 +206,17 @@
     },
     "topup": {
       "title": "Bakiye Yükle",
-      "quickAmount": "Hızlı Yükleme",
+      "quickAmount": "Hızlı Tutar",
       "customAmount": "Özel Tutar",
       "selectCard": "Ödeme Yöntemi Seç",
-      "confirm": "%{amount} Yükle",
+      "confirm": "{{amount}} Yükle",
       "success": "Bakiye Yüklendi",
-      "successMessage": "Cüzdanınıza %{amount} başarıyla yüklendi",
+      "successMessage": "Cüzdanınıza başarıyla {{amount}} yüklendi",
       "processing": "Ödeme işleniyor...",
       "ok": "Tamam"
     },
     "cardDetails": {
-      "title": "Kart Detayları",
+      "title": "Kart Bilgileri",
       "makeDefault": "Varsayılan Kart Yap",
       "removeCard": "Kartı Kaldır",
       "removeTitle": "Kartı Kaldır",
@@ -122,46 +226,39 @@
       "info": "Farklı bir ödeme yöntemi seçmediğiniz sürece bu kart tüm gelecek ödemeleriniz için kullanılacaktır."
     }
   },
-  "favorites": {
-    "title": "Favori Konumlar",
-    "noFavorites": "Henüz favori park yeri eklemediniz"
+  "settings": {
+    "language": "Dil",
+    "notifications": "Bildirimler",
+    "privacy": "Gizlilik & Güvenlik",
+    "about": "Hakkında",
+    "title": "Ayarlar"
   },
-  "history": {
-    "title": "Park Geçmişi",
-    "noHistory": "Park geçmişi bulunamadı",
-    "status": {
-      "completed": "Tamamlandı",
-      "ongoing": "Devam Ediyor"
-    }
+  "vehicles": {
+    "title": "Araçlar",
+    "noVehicles": "Henüz araç eklemediniz",
+    "addVehicle": "Araç Ekle",
+    "licensePlate": "Plaka",
+    "enterLicensePlate": "Plaka numarasını girin",
+    "make": "Marka",
+    "enterMake": "Araç markasını girin",
+    "model": "Model",
+    "enterModel": "Araç modelini girin",
+    "step": "Adım",
+    "success": "Başarılı",
+    "vehicleAdded": "Araç başarıyla eklendi",
+    "selectMake": "Araç markası seçin",
+    "selectModel": "Araç modeli seçin",
+    "details": "Araç Detayları",
+    "year": "Yıl",
+    "color": "Renk",
+    "selectCountry": "Ülke Seçin",
+    "turkishPlate": "Türk Plakası",
+    "searchCountry": "Ülke ara",
+    "noCountriesFound": "Ülke bulunamadı"
   },
-  "help": {
-    "title": "Yardım & Destek",
-    "faqTitle": "Sık Sorulan Sorular",
-    "contactSupport": "Destek ile İletişime Geç"
-  },
-  "home": {
-    "greeting": "Hoş geldiniz",
-    "menu": {
-      "findParking": "Park Yeri Bul",
-      "findParkingDesc": "Yakındaki uygun park yerlerini ara",
-      "activeParking": "Aktif Park",
-      "activeParkingDesc": "Mevcut park oturumunuzu görüntüleyin ve yönetin",
-      "payment": "Ödeme Yöntemleri",
-      "paymentDesc": "Ödeme seçeneklerinizi yönetin",
-      "favorites": "Favoriler",
-      "favoritesDesc": "Kayıtlı park yerlerinize erişin",
-      "history": "Geçmiş",
-      "historyDesc": "Geçmiş park oturumlarınızı görüntüleyin",
-      "help": "Yardım & Destek",
-      "helpDesc": "Destek alın ve sık sorulan soruları görüntüleyin"
-    }
-  },
-  "profile": {
-    "myVehicles": "Araçlarım",
-    "parkingHistory": "Park Geçmişi",
-    "paymentMethods": "Ödeme Yöntemleri",
-    "settings": "Ayarlar",
-    "helpSupport": "Yardım & Destek",
-    "logout": "Çıkış Yap"
+  "common": {
+    "next": "İleri",
+    "save": "Kaydet",
+    "loading": "Yükleniyor..."
   }
-} 
+}

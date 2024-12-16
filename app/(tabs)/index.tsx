@@ -6,6 +6,14 @@ import { router } from 'expo-router';
 import { ParketLogo } from "@/components/icons/ParketLogo";
 type Route = Parameters<typeof router.push>[0];
 
+type CarParkingInfo = {
+  plateNo: string;
+  duration: string;
+  price: string;
+  floor: string;
+  spot: string;
+};
+
 const MENU_ITEMS: Array<{
   icon: string;
   title: string;
@@ -17,12 +25,6 @@ const MENU_ITEMS: Array<{
     title: "home.menu.findParking",
     description: "home.menu.findParkingDesc",
     route: "/find-parking",
-  },
-  {
-    icon: "time",
-    title: "home.menu.activeParking",
-    description: "home.menu.activeParkingDesc",
-    route: "/active-parking",
   },
   {
     icon: "card",
@@ -50,6 +52,14 @@ const MENU_ITEMS: Array<{
   },
 ];
 
+const CURRENT_PARKING: CarParkingInfo = {
+  plateNo: "34 ABC 123",
+  duration: "2:30",
+  price: "₺45",
+  floor: "2",
+  spot: "A-15",
+};
+
 export default function HomeScreen() {
   const { t } = useTranslation();
 
@@ -61,18 +71,55 @@ export default function HomeScreen() {
       />
       
       <View style={styles.header}>
-      <View style={styles.greetingContainer}>
+        <View style={styles.greetingContainer}>
           <Text style={styles.greeting}>{t("home.greeting")}</Text>
           <Text style={styles.name}>Baha Akdemir</Text>
         </View>
         <ParketLogo size={60} />
-        
       </View>
 
       <ScrollView 
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
       >
+        <View style={styles.carInfoContainer}>
+          <View style={styles.carInfoHeader}>
+            <View style={styles.carInfoTitleContainer}>
+              <View style={styles.activeIndicator}>
+                <View style={styles.activeDot} />
+                <Text style={styles.activeText}>{t("home.active")}</Text>
+              </View>
+              <Text style={styles.plateNo}>{CURRENT_PARKING.plateNo}</Text>
+            </View>
+            <Pressable 
+              style={styles.viewDetailsButton}
+              onPress={() => router.push('/active-parking')}
+            >
+              <Text style={styles.viewDetailsText}>{t("home.viewDetails")}</Text>
+              <Ionicons name="chevron-forward" size={16} color="#1C0CCE" />
+            </Pressable>
+          </View>
+          
+          <View style={styles.carInfoGrid}>
+            <View style={styles.carInfoItem}>
+              <Text style={styles.carInfoLabel}>{t("home.duration")}</Text>
+              <Text style={styles.carInfoValue}>{CURRENT_PARKING.duration}</Text>
+            </View>
+            <View style={styles.carInfoItem}>
+              <Text style={styles.carInfoLabel}>{t("home.price")}</Text>
+              <Text style={styles.carInfoValue}>{CURRENT_PARKING.price}</Text>
+            </View>
+            <View style={styles.carInfoItem}>
+              <Text style={styles.carInfoLabel}>{t("home.floor")}</Text>
+              <Text style={styles.carInfoValue}>{CURRENT_PARKING.floor}</Text>
+            </View>
+            <View style={styles.carInfoItem}>
+              <Text style={styles.carInfoLabel}>{t("home.spot")}</Text>
+              <Text style={styles.carInfoValue}>{CURRENT_PARKING.spot}</Text>
+            </View>
+          </View>
+        </View>
+
         {MENU_ITEMS.map((item, index) => (
           <Pressable
             key={index}
@@ -176,5 +223,98 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     marginRight: 12,
+  },
+  carInfoContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  carInfoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+  },
+  carInfoTitleContainer: {
+    flexDirection: 'column',
+    gap: 6,
+  },
+  activeIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(52, 199, 89, 0.1)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  activeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#34C759',
+  },
+  activeText: {
+    fontSize: 13,
+    color: '#34C759',
+    fontWeight: '600',
+    letterSpacing: -0.2,
+  },
+  plateNo: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#000',
+    letterSpacing: -0.5,
+  },
+  viewDetailsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 14,
+  },
+  viewDetailsText: {
+    fontSize: 13,
+    color: '#007AFF',
+    fontWeight: '600',
+    letterSpacing: -0.2,
+  },
+  carInfoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 20,
+    marginTop: 4,
+  },
+  carInfoItem: {
+    width: '45%',
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+    padding: 12,
+    borderRadius: 12,
+  },
+  carInfoLabel: {
+    fontSize: 13,
+    color: '#8E8E93',
+    marginBottom: 4,
+    letterSpacing: -0.2,
+  },
+  carInfoValue: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#000',
+    letterSpacing: -0.4,
   },
 }); 

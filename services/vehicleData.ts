@@ -44,8 +44,14 @@ class VehicleDataService {
       const makesContent = await FileSystem.readAsStringAsync(
         require('../assets/car_database/car_make.csv')
       );
-      const makesData = Papa.parse<CarMake>(makesContent, { header: true });
-      this.makes = [...new Set(makesData.data.map(row => row.make))].sort();
+      const makesData = Papa.parse<CarMake>(makesContent, { 
+        header: true,
+        skipEmptyLines: true
+      });
+      this.makes = [...new Set(makesData.data
+        .filter((row): row is CarMake => row?.make !== undefined)
+        .map(row => row.make))]
+        .sort();
 
       // Load and parse models CSV
       const modelsContent = await FileSystem.readAsStringAsync(
@@ -54,13 +60,13 @@ class VehicleDataService {
       const modelsData = Papa.parse<CarModel>(modelsContent, { header: true });
       
       // Group models by make
-      modelsData.data.forEach(row => {
-        if (row.make && row.model) {
+      modelsData.data
+        .filter((row): row is CarModel => row?.make !== undefined && row?.model !== undefined)
+        .forEach(row => {
           const models = this.models.get(row.make) || [];
           models.push(row.model);
           this.models.set(row.make, [...new Set(models)].sort());
-        }
-      });
+        });
     } catch (error) {
       console.error('Error loading car data:', error);
       // Set default data if loading fails
@@ -85,7 +91,15 @@ class VehicleDataService {
         return this.countries;
       }
 
-      const response = await axios.get<ApiCountry[]>(`${API_URL}/all`);
+      const response = await axios.get<ApiCountry[]>(`${API_URL}/all`, {
+        timeout: 10000,
+        retry: 3,
+        retryDelay: 1000,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
+      });
       
       this.countries = response.data
         .map(country => ({
@@ -105,9 +119,17 @@ class VehicleDataService {
       return this.countries;
     } catch (error) {
       console.error('Error fetching countries:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Network Error Details:', {
+          message: error.message,
+          code: error.code,
+          status: error.response?.status,
+          data: error.response?.data,
+        });
+      }
       // Return default countries if API fails
       return [
-        { code: 'TR', name: 'Turkey', platePrefix: 'TR' },
+        { code: 'TR', name: 'Turkiye', platePrefix: 'TR' },
         { code: 'DE', name: 'Germany', platePrefix: 'D' },
         { code: 'FR', name: 'France', platePrefix: 'F' },
       ];

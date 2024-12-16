@@ -44,6 +44,19 @@
       "continueWithEmail": "Continue with Email",
       "alreadyHaveAccount": "Already have an account?",
       "loginLink": "Login"
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "description": "Enter your email address and we'll send you instructions to reset your password.",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "resetButton": "Reset Password",
+      "sending": "Sending...",
+      "error": "Error",
+      "provideEmail": "Please provide your email address",
+      "success": "Success",
+      "checkEmail": "Please check your email for password reset instructions",
+      "failed": "Failed to send reset instructions. Please try again."
     }
   },
   "home": {
@@ -61,7 +74,14 @@
       "historyDesc": "View your parking history",
       "help": "Help & Support",
       "helpDesc": "Get assistance and FAQs"
-    }
+    },
+    "activeParkingTitle": "Current Parking",
+    "duration": "Duration",
+    "price": "Price",
+    "floor": "Floor",
+    "spot": "Spot",
+    "active": "Active",
+    "viewDetails": "View Details"
   },
 
     "findParking": {
@@ -233,7 +253,8 @@
     "notifications": "Notifications",
     "privacy": "Privacy & Security",
     "about": "About",
-    "title": "Settings"
+    "title": "Settings",
+    "communicationPreferences": "Communication Preferences"
   },
   "vehicles": {
     "title": "Vehicles",
@@ -258,9 +279,31 @@
     "searchCountry": "Search country",
     "noCountriesFound": "No countries found"
   },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Manage your notification settings",
+    "parking": "Parking",
+    "parkingDesc": "Receive notifications for parking availability and updates",
+    "payment": "Payment",
+    "paymentDesc": "Receive notifications for payment status and updates",
+    "promotions": "Promotions",
+    "promotionsDesc": "Receive notifications for promotions and offers",
+    "system": "System",
+    "systemDesc": "Receive notifications for system updates and announcements"
+  },
   "common": {
     "next": "Next",
     "save": "Save",
     "loading": "Loading..."
+  },
+  "communications": {
+    "call": "Phone Calls",
+    "callDesc": "Allow us to contact you via phone calls for important updates",
+    "sms": "SMS Messages",
+    "smsDesc": "Receive SMS notifications about your parking and payments",
+    "email": "Email",
+    "emailDesc": "Get email updates about your account and parking history",
+    "push": "Push Notifications",
+    "pushDesc": "Receive instant updates directly on your device"
   }
 }

@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import Header from "../components/Header";
+import { router } from 'expo-router';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -16,25 +17,25 @@ export default function SettingsScreen() {
       <Header title={t('settings.title')} showBackButton={true} />
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.section}>
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/settings/language")}>
             <Ionicons name="language-outline" size={24} color="white" />
             <Text style={styles.menuText}>{t('settings.language')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/settings/notifications")}>
             <Ionicons name="notifications-outline" size={24} color="white" />
             <Text style={styles.menuText}>{t('settings.notifications')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/settings/privacy")}>
             <Ionicons name="lock-closed-outline" size={24} color="white" />
             <Text style={styles.menuText}>{t('settings.privacy')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/settings/about")}>
             <Ionicons name="information-circle-outline" size={24} color="white" />
             <Text style={styles.menuText}>{t('settings.about')}</Text>
             <Ionicons name="chevron-forward" size={24} color="white" />

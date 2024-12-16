@@ -6,6 +6,7 @@ import { useState } from "react";
 import { router } from 'expo-router';
 import { apiServices } from '../../lib/api-services';
 import Header from "@/components/Header";
+import { MasterpassIcon } from "@/components/icons/MasterpassIcon";
 export default function AddCardScreen() {
   const { t } = useTranslation();
   const [cardNumber, setCardNumber] = useState('');
@@ -83,9 +84,11 @@ export default function AddCardScreen() {
   const handleMasterpassSuccess = () => {
     setShowMasterpass(false);
     setIsLoading(true);
+    // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      setShowOtp(true);
+      // Show success modal instead of OTP screen
+      setShowSuccessModal(true);
     }, 1500);
   };
 
@@ -100,7 +103,7 @@ export default function AddCardScreen() {
         style={StyleSheet.absoluteFill}
       />
       <Header showBackButton={true} />
-
+   {showMasterpass && <View style={styles.bgsemitransparent}></View>}  
       <ScrollView style={styles.content}>
         <Text style={styles.title}>{t("payment.addCard.title")}</Text>
 
@@ -109,10 +112,13 @@ export default function AddCardScreen() {
           style={styles.masterpassButton}
           onPress={handleMasterpass}
         >
-          <Ionicons name="logo-electron" size={24} color="#FFF" />
+          <MasterpassIcon />
           <Text style={styles.masterpassText}>
             {t("payment.addCard.useMasterpass")}
           </Text>
+          <View style={styles.masterpassArrow}>
+            <Ionicons name="chevron-forward" size={24} color="#FFF" />
+          </View>
         </Pressable>
 
         <View style={styles.divider}>
@@ -407,7 +413,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FA",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    marginTop: 100,
+    marginTop: 20,
     padding: 24,
   },
   title: {
@@ -420,9 +426,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#1C0CCE",
+    backgroundColor: "#000",
     borderRadius: 12,
-    padding: 16,
+    overflow: "hidden",
     gap: 8,
   },
   masterpassText: {
@@ -530,7 +536,6 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "flex-end",
   },
   modalContent: {
@@ -624,6 +629,15 @@ const styles = StyleSheet.create({
     width: "80%",
     maxWidth: 320,
   },
+  bgsemitransparent: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 999,
+  },
   successIconContainer: {
     width: 72,
     height: 72,
@@ -662,5 +676,17 @@ const styles = StyleSheet.create({
   },
   errorButton: {
     backgroundColor: "#DC3545",
+  },
+  masterpassArrow: {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    right: -10,
+    backgroundColor: "#F89E1B",
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 10,
+    paddingRight: 20,
   },
 }); 

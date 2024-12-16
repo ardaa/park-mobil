@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ardaa.parkmobil"
     },
     "android": {
       "adaptiveIcon": {
@@ -42,6 +43,14 @@
     "assetBundlePatterns": [
       "**/*",
       "assets/*"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2d771d18-f72a-49a2-9614-dc37bc610f53"
+      }
+    }
   }
 }

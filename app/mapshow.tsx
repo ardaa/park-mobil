@@ -1,4 +1,4 @@
-import { View, ScrollView, Text, StyleSheet, Pressable, Dimensions, Modal, TouchableOpacity, Alert } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, Pressable, Dimensions, Modal, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useRef, useEffect } from 'react';
 import { PanGestureHandler, PinchGestureHandler, State, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -14,6 +14,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { ParkingApi } from '../services/parkingApi';
+import { MallInfo, FloorData, ParkingDataType } from '../types/parking';
 
 const GRID_SIZE = 40;
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -22,6 +24,9 @@ const INITIAL_X = -SCREEN_WIDTH * 0.5;
 const INITIAL_Y = -SCREEN_WIDTH * 0.3;
 const GRID_CELL_SIZE = SCREEN_WIDTH * 4 / GRID_SIZE;
 const START_POSITION = { x: 2, y: 2 };
+const GRID_COLOR = 'rgba(224, 224, 224, 0.3)'; // Very light gray with transparency
+const MAJOR_GRID_COLOR = 'rgba(224, 224, 224, 0.5)'; // Slightly darker for major grid lines
+const MAJOR_GRID_INTERVAL = 5; // Show darker lines every 5 cells
 
 type Point = { x: number; y: number };
 type Node = { point: Point; f: number; g: number; parent?: Node };
@@ -47,28 +52,50 @@ type MallInfo = {
   image: string; // URL to mall image
 };
 
-const ObstacleMarkers = ({ obstacles }: { obstacles: Set<string> }) => (
-  <>
-    {Array.from(obstacles).map((obstacleKey) => {
-      const [x, y] = obstacleKey.split(',').map(Number);
-      return (
-        <View
-          key={obstacleKey}
-          style={[
-            styles.obstacleMarker,
-            {
-              left: `${(x / GRID_SIZE) * 100}%`,
-              top: `${(y / GRID_SIZE) * 100}%`,
-              zIndex: 998,
-            },
-          ]}
-        />
-      );
-    })}
-  </>
-);
+type ParkingSpot = {
+  id: string;
+  x: number;
+  y: number;
+  occupied: boolean;
+  licensePlate?: string;
+  entryTime?: Date;
+  image?: string;
+};
 
-const FloorButton = ({ floor, isSelected = false }: { floor: FloorData, isSelected?: boolean }) => {
+type SectionBounds = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type ParkingSection = {
+  title: string;
+  color: string;
+  spots: ParkingSpot[];
+  bounds: SectionBounds;
+};
+
+type FloorSection = {
+  title: string;
+  sections: {
+    [key: string]: ParkingSection;
+  };
+};
+
+type ParkingDataType = {
+  [key: number]: FloorSection;
+};
+
+const FloorButton = ({ 
+  floor, 
+  isSelected = false,
+  onPress 
+}: { 
+  floor: FloorData, 
+  isSelected?: boolean,
+  onPress: () => void
+}) => {
   const occupancyPercentage = (floor.occupied / floor.capacity) * 100;
   
   // Calculate color based on occupancy
@@ -79,10 +106,13 @@ const FloorButton = ({ floor, isSelected = false }: { floor: FloorData, isSelect
   };
 
   return (
-    <View style={[
-      styles.floorButtonContainer,
-      isSelected && styles.floorButtonContainerSelected
-    ]}>
+    <TouchableOpacity 
+      onPress={onPress}
+      style={[
+        styles.floorButtonContainer,
+        isSelected && styles.floorButtonContainerSelected
+      ]}
+    >
       <View style={styles.floorButton}>
         <Text style={[
           styles.floorNumber,
@@ -114,7 +144,7 @@ const FloorButton = ({ floor, isSelected = false }: { floor: FloorData, isSelect
         styles.capacityText,
         isSelected && styles.capacityTextSelected
       ]}>{`${Math.round(occupancyPercentage)}% dolu`}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -123,13 +153,15 @@ const MallInfoModal = ({
   onClose,
   floors,
   mallInfo,
-  currentLevel 
+  currentLevel,
+  onFloorSelect 
 }: { 
   visible: boolean;
   onClose: () => void;
   floors: FloorData[];
   mallInfo: MallInfo;
   currentLevel: number | string;
+  onFloorSelect: (floorNumber: number | string) => void;
 }) => (
   <Modal
     visible={visible}
@@ -165,21 +197,26 @@ const MallInfoModal = ({
         </View>
 
         {/* Floor Selection Section */}
-        <Text style={styles.sectionTitle}>Katlar</Text>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.floorsScrollContainer}
-        >
-          {floors.map((floor) => (
-            <View key={floor.floorNumber}>
-              <FloorButton 
-                floor={floor} 
-                isSelected={floor.floorNumber === currentLevel}
-              />
-            </View>
-          ))}
-        </ScrollView>
+        <View style={styles.floorSectionContainer}>
+          <Text style={styles.floorSectionTitle}>Katlar</Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.floorsScrollContainer}
+          >
+            {floors.map((floor) => (
+              <View key={floor.floorNumber}>
+                <FloorButton 
+                  floor={floor} 
+                  isSelected={floor.floorNumber === currentLevel}
+                  onPress={() => {
+                    onFloorSelect(floor.floorNumber);
+                  }}
+                />
+              </View>
+            ))}
+          </ScrollView>
+        </View>
 
         <TouchableOpacity 
           style={styles.closeButton}
@@ -192,16 +229,18 @@ const MallInfoModal = ({
   </Modal>
 );
 
-const SearchBar = ({ onPress }: { onPress: () => void }) => (
-  <TouchableOpacity 
-    style={styles.searchBarContainer}
-    onPress={onPress}
-  >
-    <View style={styles.searchBar}>
-      <MaterialIcons name="search" size={24} color="#666" />
-      <Text style={styles.searchPlaceholder}>Park yeri ara...</Text>
-    </View>
-  </TouchableOpacity>
+const SearchBar = ({ onPress, visible }: { onPress: () => void, visible: boolean }) => (
+  visible ? (
+    <TouchableOpacity 
+      style={styles.searchBarContainer}
+      onPress={onPress}
+    >
+      <View style={styles.searchBar}>
+        <MaterialIcons name="search" size={24} color="#666" />
+        <Text style={styles.searchPlaceholder}>Park yeri ara...</Text>
+      </View>
+    </TouchableOpacity>
+  ) : null
 );
 
 const MapControls = () => (
@@ -272,7 +311,7 @@ const ArrivalPanel = ({ onClose }: { onClose: () => void }) => (
   </View>
 );
 
-const Header = () => (
+const Header = ({ mallInfo }: { mallInfo: MallInfo | null }) => (
   <View style={[styles.headerContainer, { backgroundColor: '#1C0CCE' }]}>
     <View style={styles.headerContent}>
       <TouchableOpacity 
@@ -307,7 +346,6 @@ export default function MapScreen() {
   const velocityY = useSharedValue(0);
   const [userPosition, setUserPosition] = useState<Point>(START_POSITION);
   const [navigationPath, setNavigationPath] = useState<Point[]>([]);
-  const [obstacles, setObstacles] = useState<Set<string>>(new Set());
   const [isNavigating, setIsNavigating] = useState(false);
   const [currentPathIndex, setCurrentPathIndex] = useState(0);
   const [pendingPath, setPendingPath] = useState<Point[]>([]);
@@ -317,107 +355,34 @@ export default function MapScreen() {
   const [showingRoutePreview, setShowingRoutePreview] = useState(false);
   const [showArrivalModal, setShowArrivalModal] = useState(false);
   const [showMallInfo, setShowMallInfo] = useState(false);
+  const [mallInfo, setMallInfo] = useState<MallInfo | null>(null);
+  const [floorData, setFloorData] = useState<FloorData[]>([]);
+  const [parkingData, setParkingData] = useState<ParkingDataType>({});
+  const [isLoading, setIsLoading] = useState(true);
 
-  const parkingData = {
-    1: {
-      title: "1. Kat",
-      sections: {
-        "zone-a": {
-          title: "A Bölgesi", 
-          color: "#EBF5FF",
-          spots: [
-            { 
-              id: "A1", 
-              occupied: true,
-              licensePlate: "34 ABC 123",
-              entryTime: new Date(2024, 2, 10, 14, 30),
-              image: "/cctv-1.jpg"
-            },
-            { id: "A2", occupied: false },
-            { 
-              id: "A3", 
-              occupied: true,
-              licensePlate: "34 DEF 456", 
-              entryTime: new Date(2024, 2, 11, 9, 15),
-              image: "/cctv-1.jpg"
-            },
-            { id: "A4", occupied: false },
-            { id: "A5", occupied: true },
-            { id: "A6", occupied: false },
-            { id: "A7", occupied: true },
-            { id: "A8", occupied: false },
-          ],
-          x: 5,
-          y: 5,
-          width: 10,
-          height: 5
-        },
-        "zone-b": {
-          title: "B Bölgesi",
-          color: "#F0FDF4",
-          spots: [
-            { id: "B1", occupied: false },
-            { id: "B2", occupied: true },
-            { id: "B3", occupied: false },
-            { id: "B4", occupied: true },
-            { id: "B5", occupied: false },
-            { id: "B6", occupied: true },
-            { id: "B7", occupied: false },
-            { id: "B8", occupied: true },
-          ],
-          x: 5,
-          y: 12,
-          width: 10,
-          height: 5
-        },
-        "vip-zone": {
-          title: "VIP Bölgesi",
-          color: "#FEF2F2", 
-          spots: [
-            { id: "V1", occupied: false },
-            { id: "V2", occupied: true },
-            { id: "V3", occupied: false },
-            { id: "V4", occupied: true },
-            { id: "V5", occupied: false },
-          ],
-          x: 17,
-          y: 5,
-          width: 8,
-          height: 5
-        },
-        "handicap-zone": {
-          title: "Engelli Parkı",
-          color: "#EEF2FF",
-          spots: [
-            { id: "H1", occupied: false },
-            { id: "H2", occupied: true },
-            { id: "H3", occupied: false },
-            { id: "H4", occupied: true },
-          ],
-          x: 17,
-          y: 12,
-          width: 8,
-          height: 5
-        }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [mallInfoData, floorData, parkingData] = await Promise.all([
+          ParkingApi.getMallInfo(),
+          ParkingApi.getFloorData(),
+          ParkingApi.getParkingData()
+        ]);
+
+        setMallInfo(mallInfoData);
+        setFloorData(floorData);
+        setParkingData(parkingData);
+      } catch (error) {
+        console.error('Error fetching parking data:', error);
+        // Handle error appropriately
+      } finally {
+        setIsLoading(false);
       }
-    }
-  };
+    };
 
-  const floorData: FloorData[] = [
-    { floorNumber: 1, capacity: 100, occupied: 75, title: "1. Kat" },
-    { floorNumber: 2, capacity: 100, occupied: 50, title: "2. Kat" },
-    { floorNumber: 3, capacity: 100, occupied: 25, title: "3. Kat" },
-    { floorNumber: "B1", capacity: 100, occupied: 25, title: "Bodrum 1. Kat" },
-  ];
-
-  const mallInfo: MallInfo = {
-    name: "Forum İstanbul AVM",
-    address: "Kocatepe, Paşa Cd. No:3/5, 34045 Bayrampaşa/İstanbul",
-    openHours: "10:00 - 22:00",
-    totalSpots: 250,
-    availableSpots: 85,
-    image: "/mall-image.jpg"
-  };
+    fetchData();
+  }, []);
 
   const panGestureHandler = useAnimatedGestureHandler({
     onStart: (_, ctx: any) => {
@@ -510,7 +475,11 @@ export default function MapScreen() {
             style={[
               styles.gridLine,
               styles.verticalLine,
-              { left: `${(i / GRID_SIZE) * 100}%` },
+              { 
+                left: `${(i / GRID_SIZE) * 100}%`,
+                backgroundColor: i % MAJOR_GRID_INTERVAL === 0 ? MAJOR_GRID_COLOR : GRID_COLOR,
+                width: i % MAJOR_GRID_INTERVAL === 0 ? 1.5 : 1,
+              },
             ]}
           />
         ))}
@@ -521,7 +490,11 @@ export default function MapScreen() {
             style={[
               styles.gridLine,
               styles.horizontalLine,
-              { top: `${(i / GRID_SIZE) * 100}%` },
+              {
+                top: `${(i / GRID_SIZE) * 100}%`,
+                backgroundColor: i % MAJOR_GRID_INTERVAL === 0 ? MAJOR_GRID_COLOR : GRID_COLOR,
+                height: i % MAJOR_GRID_INTERVAL === 0 ? 1.5 : 1,
+              },
             ]}
           />
         ))}
@@ -529,57 +502,82 @@ export default function MapScreen() {
     );
   };
 
-  const ParkingSection = ({ section, onSpotPress }: { section: any, onSpotPress: (spotId: string) => void }) => {
-    const left = (section.x / GRID_SIZE) * 100;
-    const top = (section.y / GRID_SIZE) * 100;
-    const width = (section.width / GRID_SIZE) * 100;
-    const height = (section.height / GRID_SIZE) * 100;
-
-    const spotsPerRow = Math.ceil(section.spots.length / 2);
-
+  const ParkingSection = ({ 
+    section, 
+    onSpotPress 
+  }: { 
+    section: ParkingSection;
+    onSpotPress: (spotId: string) => void;
+  }) => {
+    const { bounds, spots, title, color } = section;
+    
     return (
-      <View
-        style={[
-          styles.section,
-          {
-            left: `${left}%`,
-            top: `${top}%`,
-            width: `${width}%`,
-            height: `${height}%`,
-            backgroundColor: section.color,
-          },
-        ]}
-      >
-        <Text style={styles.sectionTitle}>{section.title}</Text>
-        <View style={styles.spotsContainer}>
-          {Array.from({ length: 2 }).map((_, rowIndex) => (
-            <View key={rowIndex} style={styles.spotRow}>
-              {section.spots
-                .slice(rowIndex * spotsPerRow, (rowIndex + 1) * spotsPerRow)
-                .map((spot: any) => (
-                  <Pressable
-                    key={spot.id}
-                    style={[
-                      styles.spot,
-                      spot.occupied ? styles.occupied : styles.available,
-                      selectedSpot === spot.id && styles.selected,
-                    ]}
-                    onPress={() => {
-                      console.log('Spot pressed:', spot.id);
-                      onSpotPress(spot.id);
-                    }}
-                  >
-                    <Text style={styles.spotText}>{spot.id}</Text>
-                  </Pressable>
-                ))}
-            </View>
-          ))}
+      <>
+        {/* Section Background with inner shadow effect */}
+        <View
+          style={[
+            styles.section,
+            {
+              left: `${(bounds.x / GRID_SIZE) * 100}%`,
+              top: `${(bounds.y / GRID_SIZE) * 100}%`,
+              width: `${(bounds.width / GRID_SIZE) * 100}%`,
+              height: `${(bounds.height / GRID_SIZE) * 100}%`,
+              backgroundColor: color,
+            },
+          ]}
+        >
+          {/* Add subtle gradient overlay */}
+          <View style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: 16,
+          }} />
         </View>
-      </View>
+        
+        {/* Section Title with floating effect */}
+        <View
+          style={[
+            styles.sectionTitleContainer,
+            {
+              left: `${(bounds.x / GRID_SIZE) * 100}%`,
+              top: `${((bounds.y - 0.8) / GRID_SIZE) * 100}%`,
+              width: `${(bounds.width / GRID_SIZE) * 100}%`,
+            },
+          ]}
+        >
+          <Text style={styles.sectionTitle}>{title}</Text>
+        </View>
+
+        {/* Individual Parking Spots with press animation */}
+        {spots !== undefined && spots.map((spot) => (
+          <Pressable
+            key={spot.id}
+            style={({ pressed }) => [
+              styles.spot,
+              spot.occupied ? styles.occupied : styles.available,
+              {
+                left: `${(spot.x / GRID_SIZE) * 100}%`,
+                top: `${(spot.y / GRID_SIZE) * 100}%`,
+                width: `${(1 / GRID_SIZE) * 100}%`,
+                height: `${(1 / GRID_SIZE) * 100}%`,
+                transform: [{ scale: pressed ? 0.95 : 1 }],
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
+            onPress={() => onSpotPress(spot.id)}
+          >
+            <Text style={styles.spotText}>{spot.id}</Text>
+          </Pressable>
+        ))}
+      </>
     );
   };
 
-  const getNeighbors = (point: Point, obstacles: Set<string>): Point[] => {
+  const getNeighbors = (point: Point): Point[] => {
     const directions = [
       { x: 0, y: 1 }, { x: 1, y: 0 },
       { x: 0, y: -1 }, { x: -1, y: 0 }
@@ -592,8 +590,7 @@ export default function MapScreen() {
       }))
       .filter(p => 
         p.x >= 0 && p.x < GRID_SIZE &&
-        p.y >= 0 && p.y < GRID_SIZE &&
-        !obstacles.has(`${p.x},${p.y}`)
+        p.y >= 0 && p.y < GRID_SIZE
       );
   };
 
@@ -602,46 +599,6 @@ export default function MapScreen() {
   };
 
   const findPath = (start: Point, end: Point, sections: any, targetSection: any) => {
-    // Create obstacles set from section borders, excluding target section and current section
-    const obstacles = new Set<string>();
-    
-    // Helper function to check if a point is inside a section
-    const isPointInSection = (point: Point, section: any) => {
-      return point.x >= section.x && 
-             point.x < section.x + section.width &&
-             point.y >= section.y && 
-             point.y < section.y + section.height;
-    };
-
-    // Find the section containing the start point
-    let startSection = null;
-    Object.values(sections).forEach((section: any) => {
-      if (isPointInSection(start, section)) {
-        startSection = section;
-      }
-    });
-
-    Object.values(sections).forEach((section: any) => {
-      // Skip the target section's obstacles and the section containing the start point
-      if (section === targetSection || section === startSection) return;
-
-      // Add borders for other sections
-      for (let x = section.x; x < section.x + section.width; x++) {
-        obstacles.add(`${x},${section.y}`);
-        obstacles.add(`${x},${section.y + section.height - 1}`);
-      }
-      for (let y = section.y; y < section.y + section.height; y++) {
-        obstacles.add(`${section.x},${y}`);
-        obstacles.add(`${section.x + section.width - 1},${y}`);
-      }
-    });
-
-    setObstacles(obstacles);
-
-    console.log('Start position:', start);
-    console.log('End position:', end);
-    console.log('Obstacles:', Array.from(obstacles));
-
     const openSet: Node[] = [{
       point: start,
       g: 0,
@@ -667,12 +624,16 @@ export default function MapScreen() {
 
       closedSet.add(currentKey);
 
-      for (const neighbor of getNeighbors(current.point, obstacles)) {
+      // Get valid neighbors without obstacle checking
+      const neighbors = getNeighbors(current.point);
+
+      for (const neighbor of neighbors) {
         const neighborKey = `${neighbor.x},${neighbor.y}`;
         if (closedSet.has(neighborKey)) continue;
 
         const g = current.g + 1;
-        const f = g + manhattanDistance(neighbor, end);
+        const h = manhattanDistance(neighbor, end);
+        const f = g + h;
 
         const neighborNode: Node = {
           point: neighbor,
@@ -705,17 +666,24 @@ export default function MapScreen() {
     setSelectedSpot(spotId);
     
     Object.entries(parkingData[currentLevel].sections).forEach(([_, section]) => {
-      const spot = section.spots.find((s: any) => s.id === spotId);
+      // Skip sections without spots (like entrance/exit markers)
+      if (!section.spots || section.isMarker) {
+        return;
+      }
+
+      const spot = section.spots.find((s) => s.id === spotId);
       if (spot) {
-        const spotIndex = section.spots.indexOf(spot);
-        const spotsPerRow = Math.ceil(section.spots.length / 2);
-        const row = Math.floor(spotIndex / spotsPerRow);
-        const col = spotIndex % spotsPerRow;
+        // Use the exact spot coordinates instead of calculating from index
+        const targetX = spot.x;
+        const targetY = spot.y;
         
-        const targetX = section.x + 2 + (col * 2);
-        const targetY = section.y + 2 + (row * 2);
+        const path = findPath(
+          userPosition, 
+          { x: targetX, y: targetY }, 
+          parkingData[currentLevel].sections, 
+          section
+        );
         
-        const path = findPath(userPosition, { x: targetX, y: targetY }, parkingData[currentLevel].sections, section);
         if (path) {
           setPendingPath(path);
           setNavigationPath(path);
@@ -741,15 +709,62 @@ export default function MapScreen() {
 
   const NavigationPath = () => (
     <>
+      {/* Draw path lines between points */}
+      {navigationPath.map((point, index) => {
+        if (index === navigationPath.length - 1) return null;
+        
+        const nextPoint = navigationPath[index + 1];
+        const x1 = (point.x / GRID_SIZE) * 100;
+        const y1 = (point.y / GRID_SIZE) * 100;
+        const x2 = (nextPoint.x / GRID_SIZE) * 100;
+        const y2 = (nextPoint.y / GRID_SIZE) * 100;
+        
+        // Calculate line dimensions and position
+        const isHorizontal = y1 === y2;
+        const width = isHorizontal ? Math.abs(x2 - x1) : 0.2; // Thinner lines
+        const height = isHorizontal ? 0.2 : Math.abs(y2 - y1); // Thinner lines
+        
+        // Calculate the correct position for the line
+        const left = isHorizontal ? Math.min(x1, x2) : x1;
+        const top = isHorizontal ? y1 : Math.min(y1, y2);
+        
+        return (
+          <View
+            key={`line-${index}`}
+            style={[
+              styles.pathLine,
+              {
+                left: `${left}%`,
+                top: `${top}%`,
+                width: `${width}%`,
+                height: `${height}%`,
+                transform: [
+                  { translateX: isHorizontal ? 0 : -0.1 }, // Adjust for thinner lines
+                  { translateY: isHorizontal ? -0.1 : 0 }  // Adjust for thinner lines
+                ],
+                zIndex: 999,
+              }
+            ]}
+          />
+        );
+      })}
+
+      {/* Draw all path points */}
       {navigationPath.map((point, index) => (
         <View
-          key={index}
+          key={`point-${index}`}
           style={[
             styles.pathPoint,
             {
               left: `${(point.x / GRID_SIZE) * 100}%`,
               top: `${(point.y / GRID_SIZE) * 100}%`,
-              zIndex: 999,
+              width: index === navigationPath.length - 1 ? 12 : 6, // Smaller points
+              height: index === navigationPath.length - 1 ? 12 : 6, // Smaller points
+              transform: [
+                { translateX: index === navigationPath.length - 1 ? -6 : -3 },
+                { translateY: index === navigationPath.length - 1 ? -6 : -3 }
+              ],
+              zIndex: 1000,
             },
           ]}
         />
@@ -965,66 +980,95 @@ export default function MapScreen() {
     }
   }, [isNavigating, currentPathIndex, navigationPath]);
 
+  const handleFloorSelect = (floorNumber: number | string) => {
+    setCurrentLevel(typeof floorNumber === 'string' ? parseInt(floorNumber) : floorNumber);
+    // Reset map position when changing floors
+    translateX.value = withSpring(INITIAL_X);
+    translateY.value = withSpring(INITIAL_Y);
+    scale.value = withSpring(INITIAL_SCALE);
+    savedScale.value = INITIAL_SCALE;
+    
+    // Clear any active navigation
+    setNavigationPath([]);
+    setIsNavigating(false);
+    setShowingRoutePreview(false);
+    setSelectedSpot(null);
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
-        <Header />
-        <MapControls />
-        <SearchBar onPress={() => setShowMallInfo(true)} />
-        <MallInfoModal
-          visible={showMallInfo}
-          onClose={() => setShowMallInfo(false)}
-          floors={floorData}
-          mallInfo={mallInfo}
-          currentLevel={currentLevel}
-        />
-        <PinchGestureHandler
-          onGestureEvent={pinchGestureHandler}
-          simultaneousHandlers={[panGestureHandler]}
-        >
-          <Animated.View>
-            <PanGestureHandler
-              onGestureEvent={panGestureHandler}
-              simultaneousHandlers={[pinchGestureHandler]}
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0066FF" />
+          </View>
+        ) : (
+          <>
+            <Header mallInfo={mallInfo} />
+            <MapControls />
+            <SearchBar 
+              onPress={() => setShowMallInfo(true)} 
+              visible={!showingRoutePreview && !isNavigating && !showArrivalModal}
+            />
+            {mallInfo && (
+              <MallInfoModal
+                visible={showMallInfo}
+                onClose={() => setShowMallInfo(false)}
+                floors={floorData}
+                mallInfo={mallInfo}
+                currentLevel={currentLevel}
+                onFloorSelect={handleFloorSelect}
+              />
+            )}
+            <PinchGestureHandler
+              onGestureEvent={pinchGestureHandler}
+              simultaneousHandlers={[panGestureHandler]}
             >
-              <Animated.View style={[styles.mapContainer, animatedStyle]}>
-                <GridLines />
-                {Object.entries(parkingData[currentLevel].sections).map(([key, section]) => (
-                  <ParkingSection 
-                    key={key} 
-                    section={section} 
-                    onSpotPress={handleSpotSelection}
-                  />
-                ))}
-                <NavigationPath />
-                <UserMarker />
+              <Animated.View>
+                <PanGestureHandler
+                  onGestureEvent={panGestureHandler}
+                  simultaneousHandlers={[pinchGestureHandler]}
+                >
+                  <Animated.View style={[styles.mapContainer, animatedStyle]}>
+                    <GridLines />
+                    {Object.entries(parkingData[currentLevel].sections).map(([key, section]) => (
+                      <ParkingSection 
+                        key={key} 
+                        section={section} 
+                        onSpotPress={handleSpotSelection}
+                      />
+                    ))}
+                    <NavigationPath />
+                    <UserMarker />
+                  </Animated.View>
+                </PanGestureHandler>
               </Animated.View>
-            </PanGestureHandler>
-          </Animated.View>
-        </PinchGestureHandler>
-        {showingRoutePreview && (
-          <RoutePreview
-            distance={pendingPath.length}
-            estimatedTime={pendingPath.length}
-            onStartNavigation={() => {
-              setShowingRoutePreview(false);
-              startNavigation();
-            }}
-            onCancel={() => {
-              setShowingRoutePreview(false);
-              setNavigationPath([]);
-              setSelectedSpot(null);
-            }}
-          />
-        )}
-        {isNavigating && <NavigationControlPanel />}
-        {showArrivalModal && (
-          <ArrivalPanel 
-            onClose={() => {
-              setShowArrivalModal(false);
-              setNavigationPath([]);
-            }}
-          />
+            </PinchGestureHandler>
+            {showingRoutePreview && (
+              <RoutePreview
+                distance={pendingPath.length}
+                estimatedTime={pendingPath.length}
+                onStartNavigation={() => {
+                  setShowingRoutePreview(false);
+                  startNavigation();
+                }}
+                onCancel={() => {
+                  setShowingRoutePreview(false);
+                  setNavigationPath([]);
+                  setSelectedSpot(null);
+                }}
+              />
+            )}
+            {isNavigating && <NavigationControlPanel />}
+            {showArrivalModal && (
+              <ArrivalPanel 
+                onClose={() => {
+                  setShowArrivalModal(false);
+                  setNavigationPath([]);
+                }}
+              />
+            )}
+          </>
         )}
       </SafeAreaView>
     </GestureHandlerRootView>
@@ -1051,32 +1095,55 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
+    backgroundColor: '#FFFFFF', // Pure white background
   },
   gridLine: {
     position: 'absolute',
-    backgroundColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
   },
   verticalLine: {
-    width: 1,
     height: '100%',
   },
   horizontalLine: {
     width: '100%',
-    height: 1,
   },
   section: {
     position: 'absolute',
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 1,
+    borderRadius: 16,
+    borderWidth: 0.5,
     borderColor: 'rgba(0,0,0,0.1)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  sectionTitleContainer: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    zIndex: 10,
+    transform: [{ translateY: -20 }],
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 80,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '600',
-    marginBottom: 8,
-    marginLeft: 10,
-    color: '#4B5563',
+    color: '#1a1a1a',
+    textAlign: 'center',
+    letterSpacing: 0.3,
   },
   spotsContainer: {
     flex: 1,
@@ -1088,29 +1155,40 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   spot: {
-    width: 45,
-    height: 45,
-    borderRadius: 8,
+    position: 'absolute',
+    borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    margin: 2,
+    borderWidth: 0.5,
+    zIndex: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   available: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: 'rgba(232, 245, 233, 0.95)',
     borderColor: '#4CAF50',
   },
   occupied: {
-    backgroundColor: '#FFEBEE',
+    backgroundColor: 'rgba(255, 235, 238, 0.95)',
     borderColor: '#EF5350',
   },
   selected: {
-    borderWidth: 2,
-    borderColor: '#2196F3',
+    borderWidth: 1.5,
+    borderColor: '#007AFF',
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   spotText: {
-    fontSize: 16,
+    fontSize: 11,
     fontWeight: '500',
+    color: '#1a1a1a',
+    letterSpacing: 0.2,
   },
   header: {
     flexDirection: 'row',
@@ -1149,27 +1227,25 @@ const styles = StyleSheet.create({
   },
   pathPoint: {
     position: 'absolute',
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: '#2196F3',
-    opacity: 0.8,
-    transform: [{ translateX: -5 }, { translateY: -5 }],
-    zIndex: 999,
+    opacity: 1,
+    transform: [{ translateX: -3 }, { translateY: -3 }],
+    zIndex: 1000,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 2,
   },
   pathLine: {
     position: 'absolute',
-    height: 3,
-    backgroundColor: '#2196F3',
-    opacity: 0.6,
-    zIndex: 998,
-  },
-  obstacleMarker: {
-    position: 'absolute',
-    width: 10,
-    height: 10,
-    backgroundColor: 'rgba(255, 0, 0, 0.5)',
-    transform: [{ translateX: -5 }, { translateY: -5 }],
+
+    opacity: 0.6, // More transparent lines
+    zIndex: 999,
   },
   modalOverlay: {
     flex: 1,
@@ -1233,7 +1309,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   navigationPanel: {
-    padding: 16,
+    padding: 26,
   },
   navigationHeader: {
     flexDirection: 'row',
@@ -1655,5 +1731,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#0066FF',
     fontWeight: '500',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  floorSectionContainer: {
+    paddingHorizontal: 20,
+  },
+  floorSectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1a1a1a',
+    marginBottom: 12,
+    textAlign: 'left', // Align text to left
+  },
+  floorsScrollContainer: {
+    paddingBottom: 20,
+    gap: 12,
   },
 });

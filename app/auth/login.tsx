@@ -146,6 +146,7 @@ export default function Login() {
               {t('auth.login.continueWith', { provider: 'Google' })}
             </Text>
           </Pressable>
+
         </View>
       </View>
     </KeyboardAvoidingView>
