@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import Header from "../components/Header";
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -12,7 +13,8 @@ export default function SettingsScreen() {
         colors={["#1C0CCE", "#1d3461"]}
         style={StyleSheet.absoluteFill}
       />
-      <ScrollView style={styles.scrollView}>
+      <Header title={t('settings.title')} showBackButton={true} />
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.section}>
           <TouchableOpacity style={styles.menuItem}>
             <Ionicons name="language-outline" size={24} color="white" />
@@ -50,8 +52,12 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   section: {
     padding: 20,
+    paddingTop: 30,
   },
   menuItem: {
     flexDirection: "row",
@@ -59,12 +65,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 15,
   },
   menuText: {
     color: "#FFF",
     fontSize: 16,
     flex: 1,
     marginLeft: 15,
+    fontFamily: 'Roboto-Regular',
   },
 }); 

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { router } from 'expo-router';
-import Header from "../../components/Header";
+import Header from "@/components/Header";
 
 const QUICK_AMOUNTS = [50, 100, 200, 500];
 
@@ -44,7 +44,8 @@ export default function TopUpScreen() {
         colors={["#1C0CCE", "#1d3461"]}
         style={StyleSheet.absoluteFill}
       />
-      <Header />
+      <Header showBackButton={true} />
+
       <ScrollView style={styles.content}>
         <Text style={styles.title}>{t("payment.topup.title")}</Text>
 

@@ -29,12 +29,17 @@ export default function Login() {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { handleGoogleSignIn, isReady: isGoogleReady } = useGoogleSignIn();
   const { login } = useAuth();
 
   const handleLogin = async () => {
     try {
+      setIsLoading(true);
+      
       if (!email || !password) {
+      setIsLoading(false);
+
         Alert.alert(t('auth.login.error'), t('auth.login.provideBothFields'));
         return;
       }
@@ -46,13 +51,19 @@ export default function Login() {
 
       const response = await loginWithEmailAndPassword(credentials);
       login(response.token);
+      setIsLoading(false);
+
       router.replace('/(tabs)');
     } catch (error) {
+      setIsLoading(false);
+
       Alert.alert(
         t('auth.login.error'),
         t('auth.login.invalidCredentials')
       );
     }
+    setIsLoading(false);
+
   };
 
   return (
@@ -106,10 +117,11 @@ export default function Login() {
           </Link>
 
           <Pressable 
-            style={styles.loginButton} 
+            style={[styles.loginButton, isLoading && {backgroundColor: 'rgba(255, 255, 255, 0.5)'}]}
             onPress={handleLogin}
+            disabled={isLoading}
           >
-            <Text style={styles.loginButtonText}>{t('auth.login.loginButton')}</Text>
+            <Text style={styles.loginButtonText}>{isLoading ? 'Logging in...' : t('auth.login.loginButton')}</Text>
           </Pressable>
 
           <Text style={styles.orText}>{t('auth.login.or')}</Text>

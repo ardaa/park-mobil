@@ -88,7 +88,11 @@
 
     "favorites": {
       "title": "Favorite Locations",
-      "noFavorites": "You haven't saved any favorite parking locations yet"
+      "noFavorites": "You haven't saved any parking locations yet",
+      "findParking": "Find Parking",
+      "removeFromFavorites": "Remove from favorites",
+      "addedToFavorites": "Added to favorites",
+      "removedFromFavorites": "Removed from favorites"
     },
     "history": {
       "title": "Parking History",
@@ -101,7 +105,45 @@
     "help": {
       "title": "Help & Support",
       "faqTitle": "Frequently Asked Questions",
-      "contactSupport": "Contact Support"
+      "contactSupport": "Contact Support",
+      "liveChat": "Live Chat",
+      "liveChatDesc": "Chat with our support team",
+      "whatsapp": "WhatsApp",
+      "whatsappDesc": "Message us on WhatsApp",
+      "phone": "Call Us",
+      "phoneDesc": "24/7 Support Line",
+      "email": "Email",
+      "emailDesc": "Send us an email",
+      "chat": {
+        "welcome": "Hello! How can we help you today?",
+        "autoResponse": "Thanks for your message. One of our support agents will respond shortly.",
+        "placeholder": "Type your message...",
+        "permissionDenied": "Permission Denied",
+        "permissionMessage": "We need permission to access your photos to send images.",
+        "imageReceived": "Thanks for sending the image. Our support team will review it.",
+        "error": "Error",
+        "imageError": "There was an error selecting the image. Please try again.",
+        "imageUploading": "Uploading image...",
+        "imageSent": "Image sent"
+      },
+      "faq": {
+        "howToPark": {
+          "question": "How do I start parking?",
+          "answer": "Simply open the app, select 'Find Parking', and follow the on-screen instructions to find and book a parking spot."
+        },
+        "payment": {
+          "question": "What payment methods are accepted?",
+          "answer": "We accept all major credit cards, debit cards, and mobile payment methods including Apple Pay and Google Pay."
+        },
+        "cancel": {
+          "question": "How do I cancel a parking session?",
+          "answer": "Go to 'Active Parking' in the app and tap 'End Parking Session'. You'll only be charged for the time you've used."
+        },
+        "refund": {
+          "question": "How do refunds work?",
+          "answer": "Refunds are automatically processed to your original payment method within 3-5 business days of cancellation."
+        }
+      }
     },
     "payment": {
         "title": "Payment Methods",
@@ -185,13 +227,40 @@
           "remove": "Remove",
           "info": "This card will be used for all your future payments unless you select a different payment method."
         }
-      }
-  
-},
+      },
   "settings": {
     "language": "Language",
     "notifications": "Notifications",
     "privacy": "Privacy & Security",
-    "about": "About"
+    "about": "About",
+    "title": "Settings"
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "noVehicles": "You haven't added any vehicles yet",
+    "addVehicle": "Add Vehicle",
+    "licensePlate": "License Plate",
+    "enterLicensePlate": "Enter license plate number",
+    "make": "Make",
+    "enterMake": "Enter vehicle make",
+    "model": "Model",
+    "enterModel": "Enter vehicle model",
+    "step": "Step",
+    "success": "Success",
+    "vehicleAdded": "Vehicle has been added successfully",
+    "selectMake": "Select vehicle make",
+    "selectModel": "Select vehicle model",
+    "details": "Vehicle Details",
+    "year": "Year",
+    "color": "Color",
+    "selectCountry": "Select Country",
+    "turkishPlate": "Turkish License Plate",
+    "searchCountry": "Search country",
+    "noCountriesFound": "No countries found"
+  },
+  "common": {
+    "next": "Next",
+    "save": "Save",
+    "loading": "Loading..."
   }
-} 
+}

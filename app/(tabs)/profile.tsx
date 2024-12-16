@@ -18,7 +18,7 @@ export default function ProfileScreen() {
   };
 
   const navigateToParkingHistory = () => {
-    router.push('/parking-history');
+    router.push('/history');
   };
 
   const navigateToPaymentMethods = () => {
@@ -30,7 +30,7 @@ export default function ProfileScreen() {
   };
 
   const navigateToSupport = () => {
-    router.push('/support');
+    router.push('/help');
   };
 
   return (

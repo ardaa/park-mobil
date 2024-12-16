@@ -16,7 +16,7 @@ i18n
         translation: tr
       }
     },
-    lng: getLocales()[0].languageCode || 'en',
+    lng: getLocales()[0]?.languageCode || 'en',
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false

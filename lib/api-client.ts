@@ -12,11 +12,36 @@ const apiClient = axios.create({
 
 // Request interceptor to add auth token
 apiClient.interceptors.request.use((config) => {
-  const token = // Get token from secure storage
+  const token = ''// Get token from secure storage
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+export async function getClosestMaps() {
+  // TODO: Implement actual API call to get nearby maps
+  // This is a mock implementation
+  return [
+    {
+      id: '1',
+      name: 'Central Park Garage',
+      distance: 0.5,
+      address: '123 Main Street',
+    },
+    {
+      id: '2',
+      name: 'Downtown Parking',
+      distance: 1.2,
+      address: '456 Market Street',
+    },
+    {
+      id: '3',
+      name: 'Shopping Mall Parking',
+      distance: 2.3,
+      address: '789 Commerce Ave',
+    },
+  ];
+}
 
 export default apiClient; 

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { router, useLocalSearchParams } from 'expo-router';
-
+import Header from "@/components/Header";
 export default function CardDetailsScreen() {
   const { t } = useTranslation();
   const params = useLocalSearchParams();
@@ -49,6 +49,8 @@ export default function CardDetailsScreen() {
         colors={["#1C0CCE", "#1d3461"]}
         style={StyleSheet.absoluteFill}
       />
+      <Header showBackButton={true} />
+
       <View style={styles.content}>
         <Text style={styles.title}>{t("payment.cardDetails.title")}</Text>
 
