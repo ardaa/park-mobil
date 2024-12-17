@@ -17,11 +17,26 @@ export const mockFloorData: FloorData[] = [
 
 export const mockParkingData: ParkingDataType = {
   1: {
-    title: "1. Kat",
+    title: "Floor 1",
     sections: {
-      "zone-a": {
-        title: "A Bölgesi",
-        color: "rgba(240, 245, 255, 0.7)",
+      "stairs": {
+        title: "Stairs",
+        color: "#E8EAF6",
+        bounds: { x: 5, y: 5, width: 2, height: 2 },
+        isMarker: true,
+        markers: {
+          stairs: [{
+            id: "stairs1",
+            x: 5,
+            y: 5,
+            type: "stairs",
+            connectedFloors: [1, 2, 3]
+          }]
+        }
+      },
+      "A": {
+        title: "Section A",
+        color: "#E3F2FD",
         spots: [
           { 
             id: "A1", 
@@ -48,7 +63,20 @@ export const mockParkingData: ParkingDataType = {
           { id: "A7", x: 2, y: 8, occupied: true },
           { id: "A8", x: 2, y: 9, occupied: false }
         ],
-        bounds: { x: 1, y: 1, width: 3, height: 10 }
+        bounds: { x: 1, y: 1, width: 3, height: 10 },
+        markers: {
+          stairs: [{
+            id: "stairs1",
+            x: 5,
+            y: 5,
+            type: "stairs",
+            connectedFloors: [1, 2, 3]
+          }],
+          entrance: [{
+            x: 2,
+            y: 2
+          }]
+        }
       },
       "zone-b": {
         title: "B Bölgesi",
@@ -122,6 +150,21 @@ export const mockParkingData: ParkingDataType = {
   2: {
     title: "2. Kat",
     sections: {
+      "stairs": {
+        title: "Stairs",
+        color: "#E8EAF6",
+        bounds: { x: 5, y: 5, width: 2, height: 2 },
+        isMarker: true,
+        markers: {
+          stairs: [{
+            id: "stairs2",
+            x: 5,
+            y: 5,
+            type: "stairs",
+            connectedFloors: [1, 2, 3]
+          }]
+        }
+      },
       "zone-a": {
         title: "A Bölgesi",
         color: "rgba(240, 245, 255, 0.7)",
@@ -142,6 +185,21 @@ export const mockParkingData: ParkingDataType = {
   3: {
     title: "3. Kat",
     sections: {
+      "stairs": {
+        title: "Stairs",
+        color: "#E8EAF6",
+        bounds: { x: 5, y: 5, width: 2, height: 2 },
+        isMarker: true,
+        markers: {
+          stairs: [{
+            id: "stairs3",
+            x: 5,
+            y: 5,
+            type: "stairs",
+            connectedFloors: [1, 2, 3]
+          }]
+        }
+      },
       "zone-a": {
         title: "A Bölgesi",
         color: "rgba(240, 245, 255, 0.7)",

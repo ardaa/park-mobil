@@ -21,12 +21,6 @@ const MENU_ITEMS: Array<{
   route: Route;
 }> = [
   {
-    icon: "car",
-    title: "home.menu.findParking",
-    description: "home.menu.findParkingDesc",
-    route: "/find-parking",
-  },
-  {
     icon: "card",
     title: "home.menu.payment",
     description: "home.menu.paymentDesc",
@@ -43,6 +37,12 @@ const MENU_ITEMS: Array<{
     title: "home.menu.history",
     description: "home.menu.historyDesc",
     route: "/history",
+  },
+  {
+    icon: "gift",
+    title: "home.menu.campaigns",
+    description: "home.menu.campaignsDesc",
+    route: "/campaigns",
   },
   {
     icon: "help-circle",
@@ -118,6 +118,17 @@ export default function HomeScreen() {
               <Text style={styles.carInfoValue}>{CURRENT_PARKING.spot}</Text>
             </View>
           </View>
+          
+          <Pressable 
+            style={styles.takeMeButton}
+            onPress={() => router.push({
+              pathname: '/mapshow',
+              params: { isCarParked: true }
+            })}
+          >
+            <Ionicons name="navigate" size={20} color="#FFF" />
+            <Text style={styles.takeMeButtonText}>{t("home.takeMeToCar")}</Text>
+          </Pressable>
         </View>
 
         {MENU_ITEMS.map((item, index) => (
@@ -316,5 +327,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
     letterSpacing: -0.4,
+  },
+  takeMeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#1C0CCE',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    gap: 8,
+    marginTop: 20,
+  },
+  takeMeButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: -0.3,
   },
 }); 

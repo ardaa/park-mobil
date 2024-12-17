@@ -123,6 +123,7 @@ export default function HelpScreen() {
         <View style={styles.faqContainer}>
           {FAQS.map(renderFAQItem)}
         </View>
+        <View style={{padding: 24}}/>
       </ScrollView>
     </View>
   );

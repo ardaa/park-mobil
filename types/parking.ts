@@ -39,13 +39,24 @@ export type SectionBounds = {
   height: number;
 };
 
+export type StairMarker = {
+  id: string;
+  x: number;
+  y: number;
+  type: 'stairs' | 'elevator';
+  connectedFloors: number[];
+};
+
 export type ParkingSection = {
   title: string;
   color: string;
-  spots: ParkingSpot[];
+  spots?: ParkingSpot[];
   bounds: SectionBounds;
   isMarker?: boolean;
-  icon?: string;
+  markers?: {
+    stairs?: StairMarker[];
+    entrance?: { x: number; y: number }[];
+  };
 };
 
 export type FloorSection = {

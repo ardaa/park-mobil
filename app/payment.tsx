@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Switch } from "react-native";
+import { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Switch, RefreshControl } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,6 +24,7 @@ export default function PaymentScreen() {
     }
   });
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchPaymentMethods = async () => {
@@ -114,6 +115,36 @@ export default function PaymentScreen() {
     }
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      // Create a timeout promise that resolves after 1 second
+      const timeout = new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Run both the data fetching and the timeout in parallel
+      await Promise.all([
+        // Data fetching promises
+        Promise.all([
+          apiServices.getPaymentMethods().then(data => setPaymentMethods(data)),
+          apiServices.getWalletInfo().then(info => {
+            setWalletInfo(info);
+            setIsAutopayEnabled(info.autoTopup.enabled);
+            setAutoTopupThreshold(info.autoTopup.threshold);
+            setAutoTopupAmount(info.autoTopup.amount);
+            setWalletBalance(info.balance);
+          }),
+          apiServices.getWalletTransactions().then(txns => setTransactions(txns))
+        ]),
+        // Minimum timeout promise
+        timeout
+      ]);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -121,7 +152,18 @@ export default function PaymentScreen() {
         style={StyleSheet.absoluteFill}
       />
       <Header showBackButton={true} />
-      <ScrollView style={[styles.content, { marginTop: 20 }]}>
+      <ScrollView 
+        style={[styles.content, { marginTop: 20 }]}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            title={t("common.pullToRefresh")}
+            titleColor="#1C0CCE"
+            tintColor="#1C0CCE"
+          />
+        }
+      >
         <Text style={styles.title}>{t("payment.title")}</Text>
 
         {/* Wallet Section */}
@@ -150,7 +192,7 @@ export default function PaymentScreen() {
                     cardId: method.id,
                     last4: method.last4,
                     expiry: method.expiryDate,
-                    isDefault: method.id === "1",
+                    isDefault: method.id === "1" ? "true" : "false",
                     type: method.type
                   }
                 });
@@ -199,7 +241,7 @@ export default function PaymentScreen() {
             />
           </View>
           
-          {isAutopayEnabled && (
+          {isAutopayEnabled ? (
             <View style={styles.autopaySettings}>
               <Text style={styles.autopayLabel}>
                 {t("payment.autopay.topupWhen")}
@@ -249,6 +291,13 @@ export default function PaymentScreen() {
                   })}
                 </Text>
               </View>
+            </View>
+          ) : (
+            <View style={styles.disclaimerContainer}>
+              <Ionicons name="warning" size={24} color="#FF9800" />
+              <Text style={styles.disclaimerText}>
+                {t("payment.autopay.disclaimer", { amount: "250" })}
+              </Text>
             </View>
           )}
         </View>
@@ -492,6 +541,21 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 14,
     color: "#666",
+    lineHeight: 20,
+  },
+  disclaimerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF3E0',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 12,
+  },
+  disclaimerText: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 14,
+    color: '#F57C00',
     lineHeight: 20,
   },
 }); 

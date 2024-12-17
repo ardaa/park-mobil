@@ -73,7 +73,9 @@
       "history": "History",
       "historyDesc": "View your parking history",
       "help": "Help & Support",
-      "helpDesc": "Get assistance and FAQs"
+      "helpDesc": "Get assistance and FAQs",
+      "campaigns": "Campaigns",
+      "campaignsDesc": "View current campaigns and offers"
     },
     "activeParkingTitle": "Current Parking",
     "duration": "Duration",
@@ -81,21 +83,37 @@
     "floor": "Floor",
     "spot": "Spot",
     "active": "Active",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "takeMeToCar": "Take Me to My Car"
   },
 
-    "findParking": {
+"findParking": {
       "title": "Find Parking",
       "searchPlaceholder": "Search for parking locations...",
       "nearbySpots": "Nearby Parking Spots",
       "spotsAvailable": "spots available",
       "hour": "hour",
+      "noResults": "No results found",
       "parkingNames": {
         "central": "Central Station Parking",
         "mall": "Shopping Mall Garage",
         "square": "City Square Parking",
         "avenue": "Park Avenue Garage"
-      }
+      },
+      "navigation": "Navigation",
+      "floorMap": "Floor Map",
+      "goToCar": "Go to Car",
+      "currentParking": "Current Parking",
+      "floor": "Floor",
+      "spot": "Spot",
+      "duration": "Duration",
+      "cost": "Cost",
+      "viewDetails": "View Details",
+      "available": "Available",
+      "total": "Total",
+      "floors": "Floors",
+      "occupancyPercentage": "{{percentage}}% occupied",
+      "availableSpots": "{{count}} Available Spots"
     },
     "activeParking": {
       "title": "Active Parking",
@@ -144,7 +162,26 @@
         "error": "Error",
         "imageError": "There was an error selecting the image. Please try again.",
         "imageUploading": "Uploading image...",
-        "imageSent": "Image sent"
+        "imageSent": "Image sent",
+        "askTransaction": "Is this about a current or past parking transaction?",
+        "selectTransaction": "Please select the transaction you need help with:",
+        "selectTopic": "What topic best describes your issue?",
+        "describeIssue": "Please describe your issue in detail and our support team will assist you shortly.",
+        "agentResponse": "Thank you for providing the details. One of our support agents will contact you in a moment.",
+        "topics": {
+          "payment": "Payment Issues",
+          "technical": "Technical Problems",
+          "general": "General Questions",
+          "other": "Other"
+        },
+        "title": "Support Chat",
+        "supportAgent": "Customer Support",
+        "endChatTitle": "End Chat",
+        "endChatMessage": "Are you sure you want to end this chat session?",
+        "rateTitle": "Rate Your Experience",
+        "rateDescription": "How was your chat experience with our support team?",
+        "skipRating": "Skip",
+        "submitRating": "Submit"
       },
       "faq": {
         "howToPark": {
@@ -153,11 +190,11 @@
         },
         "payment": {
           "question": "What payment methods are accepted?",
-          "answer": "We accept all major credit cards, debit cards, and mobile payment methods including Apple Pay and Google Pay."
+          "answer": "We accept all major credit cards, debit cards."
         },
         "cancel": {
-          "question": "How do I cancel a parking session?",
-          "answer": "Go to 'Active Parking' in the app and tap 'End Parking Session'. You'll only be charged for the time you've used."
+          "question": "How do I end a parking session?",
+          "answer": "Just go to the parking lot and exit. The system will automatically calculate the cost and charge your payment method. It is that easy!"
         },
         "refund": {
           "question": "How do refunds work?",
@@ -167,7 +204,6 @@
     },
     "payment": {
         "title": "Payment Methods",
-        "addCard": "Add New Card",
         "noPaymentMethods": "No payment methods added",
         "wallet": {
           "balance": "Wallet Balance",
@@ -186,7 +222,8 @@
             "belowAmount": "Below ₺{{amount}}",
             "topupAmount": "Add ₺{{amount}}",
             "description": "Your wallet will be automatically topped up using your default payment method when your balance falls below the selected amount.",
-            "currentSetting": "Your wallet will be automatically topped up with {{amount}} when the balance falls below {{threshold}}."
+            "currentSetting": "Your wallet will be automatically topped up with {{amount}} when the balance falls below {{threshold}}.",
+            "disclaimer": "Auto top-up is disabled. When your license plate is entered into our system, a provisional charge of {{amount}} TRY will be withdrawn from your account to your default card. When you exit the parking lot, your balance will be recalculated according to the actual amount. If your payment is higher than needed, the difference will be refunded to your wallet. If your payment is less than needed, the new amount will be charged from your card. In order not to have problems when exiting, make sure you add a reliable card with balance or open auto top-up."
           },
         "transactions": {
           "title": "Recent Transactions",
@@ -294,7 +331,14 @@
   "common": {
     "next": "Next",
     "save": "Save",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "pullToRefresh": "Pull to refresh",
+    "refreshing": "Refreshing...",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "done": "Done"
   },
   "communications": {
     "call": "Phone Calls",
@@ -305,5 +349,65 @@
     "emailDesc": "Get email updates about your account and parking history",
     "push": "Push Notifications",
     "pushDesc": "Receive instant updates directly on your device"
+  },
+  "tabs": {
+    "home": "Home",
+    "findParking": "Find Parking",
+    "profile": "Profile",
+    "campaigns": "Campaigns",
+    "announcements": "Announcements"
+  },
+  "navigation": {
+    "headToStairs": "Head to the stairs to reach floor {{floor}}",
+    "takeStairs": "Take the stairs to floor {{floor}}",
+    "headToDestination": "Head to your destination on floor {{floor}}",
+    "remainingDistance": "{{distance}}m remaining",
+    "arrived": "You have arrived"
+  },
+  "campaigns": {
+    "title": "Campaigns",
+    "validUntil": "Valid until",
+    "terms": "Terms & Conditions",
+    "termsDescription": "This offer is subject to availability and cannot be combined with other promotions. The discount will be automatically applied to eligible transactions during the campaign period.",
+    "error": "Failed to load campaigns",
+    "retry": "Try Again",
+    "noCampaigns": "No active campaigns at the moment",
+    "notFound": "Campaign not found",
+    "addCode": "Add Code",
+    "enterCode": "Enter Campaign Code",
+    "codePlaceholder": "Enter code here"
+  },
+  "announcements": {
+    "error": "Failed to load announcements",
+    "noAnnouncements": "No announcements at the moment",
+    "details": "Announcement Details"
+  },
+  "about": {
+    "company": "About Company",
+    "description": "Parket is Turkey's leading smart parking platform, making parking easier and more efficient for drivers across the country. Our mission is to transform the parking experience through innovative technology.",
+    "website": "Visit Website",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "contact": "Contact Information",
+    "allRightsReserved": "All rights reserved."
+  },
+  "privacy": {
+    "title": "Privacy & Security",
+    "location": "Location Services",
+    "locationTracking": "Location Tracking",
+    "locationTrackingDesc": "Allow app to track your location for finding nearby parking spots",
+    "security": "Security",
+    "biometric": "Biometric Authentication",
+    "biometricDesc": "Use Face ID or Touch ID to secure your account",
+    "changePassword": "Change Password",
+    "twoFactor": "Two-Factor Authentication",
+    "data": "Data & Privacy",
+    "parkingHistory": "Save Parking History",
+    "parkingHistoryDesc": "Keep record of your parking history and preferences",
+    "shareData": "Share Usage Data",
+    "shareDataDesc": "Help us improve by sharing anonymous usage data",
+    "analytics": "Analytics",
+    "analyticsDesc": "Allow collection of app analytics to improve service",
+    "deleteAccount": "Delete Account"
   }
 }

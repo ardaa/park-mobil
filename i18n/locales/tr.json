@@ -60,8 +60,11 @@
       "history": "Geçmiş",
       "historyDesc": "Park geçmişinizi görüntüleyin",
       "help": "Yardım & Destek",
-      "helpDesc": "Destek alın ve SSS'leri görüntüleyin"
-    }
+      "helpDesc": "Destek alın ve SSS'leri görüntüleyin",
+      "campaigns": "Kampanyalar",
+      "campaignsDesc": "Güncel kampanya ve fırsatları görüntüle"
+    },
+    "takeMeToCar": "Arabama Git"
   },
   "findParking": {
     "title": "Park Yeri Bul",
@@ -74,7 +77,21 @@
       "mall": "AVM Otoparkı",
       "square": "Şehir Meydanı Otoparkı",
       "avenue": "Park Caddesi Otoparkı"
-    }
+    },
+    "navigation": "Navigasyon",
+    "floorMap": "Kat Planı",
+    "currentParking": "Mevcut Park",
+    "floor": "Kat",
+    "spot": "Park Yeri",
+    "duration": "Süre",
+    "cost": "Ücret",
+    "viewDetails": "Detayları Gör",
+    "goToCar": "Arabama Git",
+    "available": "Boş",
+    "total": "Toplam",
+    "floors": "Katlar",
+    "occupancyPercentage": "%{{percentage}} dolu",
+    "availableSpots": "{{count}} Boş Park Yeri"
   },
   "activeParking": {
     "title": "Aktif Park",
@@ -122,7 +139,26 @@
       "error": "Hata",
       "imageError": "Görsel seçiminde bir hata oluştu. Lütfen tekrar deneyin.",
       "imageUploading": "Görsel yükleniyor...",
-      "imageSent": "Görsel gönderildi"
+      "imageSent": "Görsel gönderildi",
+      "askTransaction": "Bu mevcut veya geçmiş bir park işlemi hakkında mı?",
+      "selectTransaction": "Lütfen yardım almak istediğiniz işlemi seçin:",
+      "selectTopic": "Sorununuzu en iyi hangi konu tanımlıyor?",
+      "describeIssue": "Lütfen sorununuzu detaylı bir şekilde açıklayın, destek ekibimiz size kısa sürede yardımcı olacaktır.",
+      "agentResponse": "Bilgileri sağladığınız için teşekkürler. Destek ekibimizden biri sizinle kısa süre içinde iletişime geçecektir.",
+      "topics": {
+        "payment": "Ödeme Sorunları",
+        "technical": "Teknik Problemler",
+        "general": "Genel Sorular",
+        "other": "Diğer"
+      },
+      "title": "Destek Sohbeti",
+      "supportAgent": "Müşteri Desteği",
+      "endChatTitle": "Sohbeti Sonlandır",
+      "endChatMessage": "Bu sohbet oturumunu sonlandırmak istediğinizden emin misiniz?",
+      "rateTitle": "Deneyiminizi Değerlendirin",
+      "rateDescription": "Destek ekibimizle olan görüşmenizi nasıl buldunuz?",
+      "skipRating": "Geç",
+      "submitRating": "Gönder"
     },
     "faq": {
       "howToPark": {
@@ -131,11 +167,11 @@
       },
       "payment": {
         "question": "Hangi ödeme yöntemleri kabul ediliyor?",
-        "answer": "Tüm major kredi kartları, banka kartları ve Apple Pay ile Google Pay dahil mobil ödeme yöntemlerini kabul ediyoruz."
+        "answer": "Tüm ülkelerde kabul edilen tüm kredi kartları, banka kartları, mobil ödeme yöntemleri kabul edilmektedir."
       },
       "cancel": {
         "question": "Park oturumunu nasıl iptal ederim?",
-        "answer": "Uygulamada 'Aktif Park' bölümüne gidin ve 'Park Oturumunu Sonlandır'a dokunun. Sadece kullandığınız süre için ücretlendirilirsiniz."
+        "answer": "Otoparka giderek çıkış yapın. Sistem otomatik olarak ücreti hesaplayacak ve ödeme yönteminizi kullanacaktır. Bu kadar kolay!"
       },
       "refund": {
         "question": "İadeler nasıl çalışır?",
@@ -164,7 +200,8 @@
       "belowAmount": "₺{{amount}} altında",
       "topupAmount": "₺{{amount}} ekle",
       "description": "Bakiyeniz seçilen tutarın altına düştüğünde, varsayılan ödeme yönteminiz kullanılarak cüzdanınız otomatik olarak yüklenecektir.",
-      "currentSetting": "Bakiyeniz {{threshold}} altına düştüğünde cüzdanınıza otomatik olarak {{amount}} yüklenecektir."
+      "currentSetting": "Bakiyeniz {{threshold}} altına düştüğünde cüzdanınıza otomatik olarak {{amount}} yüklenecektir.",
+      "disclaimer": "Otomatik ödeme talimati kapalı. Plaka okunduğunda hesabınızdan {{amount}} TL tutarında provizyon işlemi tahsil edilecektir. Otoparktan çıktığınızda bakiyeniz hesaplanan yeni tutara göre tekrar hesaplanır. Ödemeniz fazla çıkarsa cüzdanınza iade edilir. Ödemeniz az çıkarsa kartınızdan yeni tutar tahsil edilir. Otoparktan çıkış yaparken sorun yaşamamak için lütfen bakiyesi yeterli güvenilir bir kart seçin veya otomatik ödeme talimatını açın."
     },
     "transactions": {
       "title": "Son İşlemler",
@@ -259,6 +296,71 @@
   "common": {
     "next": "İleri",
     "save": "Kaydet",
-    "loading": "Yükleniyor..."
+    "loading": "Yükleniyor...",
+    "pullToRefresh": "Yenilemek için çekin",
+    "refreshing": "Yenileniyor...",
+    "yes": "Evet",
+    "no": "Hayır"
+  },
+  "tabs": {
+    "home": "Ana Sayfa",
+    "findParking": "Park Yeri Bul",
+    "profile": "Profil",
+    "campaigns": "Kampanyalar",
+    "announcements": "Duyurular"
+  },
+  "navigation": {
+    "headToStairs": "Kat {{floor}}'e ulaşmak için merdivenlere gidin",
+    "takeStairs": "Kat {{floor}}'e çıkmak için merdivenleri kullanın",
+    "headToDestination": "Kat {{floor}}'deki hedefinize ilerleyin",
+    "remainingDistance": "{{distance}}m kaldı",
+    "arrived": "Hedefe ulaştınız"
+  },
+  "campaigns": {
+    "title": "Kampanyalar",
+    "validUntil": "Geçerlilik",
+    "terms": "Şartlar ve Koşullar",
+    "termsDescription": "Bu teklif müsaitlik durumuna bağlıdır ve diğer promosyonlarla birleştirilemez. İndirim, kampanya süresi boyunca uygun işlemlere otomatik olarak uygulanacaktır.",
+    "error": "Kampanyalar yüklenemedi",
+    "retry": "Tekrar Dene",
+    "noCampaigns": "Şu anda aktif kampanya bulunmuyor",
+    "notFound": "Kampanya bulunamadı",
+    "addCode": "Kod Ekle",
+    "enterCode": "Kampanya Kodu Gir",
+    "codePlaceholder": "Kodu buraya girin",
+    "details": "Duyuru Detayları"
+  },
+  "announcements": {
+    "error": "Duyurular yüklenemedi",
+    "noAnnouncements": "Şu anda duyuru bulunmuyor",
+    "details": "Duyuru Detayları"
+  },
+  "about": {
+    "company": "Şirket Hakkında",
+    "description": "Parket, Türkiye'nin önde gelen akıllı park platformudur ve ülke genelinde sürücüler için park etmeyi daha kolay ve verimli hale getirmektedir. Misyonumuz, yenilikçi teknoloji ile park deneyimini dönüştürmektir.",
+    "website": "Web Sitesi",
+    "privacyPolicy": "Gizlilik Politikası",
+    "terms": "Kullanım Koşulları",
+    "contact": "İletişim Bilgileri",
+    "allRightsReserved": "Tüm hakları saklıdır."
+  },
+  "privacy": {
+    "title": "Gizlilik ve Güvenlik",
+    "location": "Konum Hizmetleri",
+    "locationTracking": "Konum Takibi",
+    "locationTrackingDesc": "Yakındaki park yerlerini bulmak için konum takibine izin ver",
+    "security": "Güvenlik",
+    "biometric": "Biyometrik Kimlik Doğrulama",
+    "biometricDesc": "Face ID veya Touch ID ile hesabınızı güvence altına alın",
+    "changePassword": "Şifre Değiştir",
+    "twoFactor": "İki Faktörlü Kimlik Doğrulama",
+    "data": "Veri ve Gizlilik",
+    "parkingHistory": "Park Geçmişini Kaydet",
+    "parkingHistoryDesc": "Park geçmişinizi ve tercihlerinizi kaydedin",
+    "shareData": "Kullanım Verilerini Paylaş",
+    "shareDataDesc": "Anonim kullanım verilerini paylaşarak iyileştirmelere yardımcı olun",
+    "analytics": "Analitik",
+    "analyticsDesc": "Hizmeti iyileştirmek için uygulama analitiğinin toplanmasına izin ver",
+    "deleteAccount": "Hesabı Sil"
   }
 }

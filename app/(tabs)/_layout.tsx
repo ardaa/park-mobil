@@ -3,9 +3,11 @@ import { router } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from 'react-i18next';
 
 export default function TabsLayout() {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -28,25 +30,25 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: t('tabs.home'),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="map"
+        name="find-parking"
         options={{
-          title: "Map",
+          title: t('tabs.findParking'),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="map" size={size} color={color} />
+            <Ionicons name="search" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: t('tabs.profile'),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),

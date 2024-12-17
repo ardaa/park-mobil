@@ -54,14 +54,6 @@ export default function ActiveParkingScreen() {
               <Text style={styles.costLabel}>{t("activeParking.currentCost")}</Text>
               <Text style={styles.costValue}>₺37.50</Text>
             </View>
-            
-            <Pressable style={styles.extendButton}>
-              <Text style={styles.extendButtonText}>{t("activeParking.extend")}</Text>
-            </Pressable>
-            
-            <Pressable style={styles.endButton}>
-              <Text style={styles.endButtonText}>{t("activeParking.end")}</Text>
-            </Pressable>
           </View>
         ) : (
           <Text style={styles.emptyState}>{t("activeParking.noActiveParking")}</Text>

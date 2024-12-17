@@ -16,6 +16,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { ParkingApi } from '../services/parkingApi';
 import { MallInfo, FloorData, ParkingDataType } from '../types/parking';
+import { useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 const GRID_SIZE = 40;
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -74,6 +76,11 @@ type ParkingSection = {
   color: string;
   spots: ParkingSpot[];
   bounds: SectionBounds;
+  isMarker?: boolean;
+  markers?: {
+    stairs?: StairMarker[];
+    entrance?: { x: number; y: number }[];
+  };
 };
 
 type FloorSection = {
@@ -87,6 +94,25 @@ type ParkingDataType = {
   [key: number]: FloorSection;
 };
 
+const getRandomSpot = (parkingData: ParkingDataType, currentLevel: number): ParkingSpot | null => {
+  const sections = parkingData[currentLevel].sections;
+  const occupiedSpots: ParkingSpot[] = [];
+
+  // Collect all occupied spots
+  Object.values(sections).forEach(section => {
+    if (section.spots) {
+      section.spots
+        .filter(spot => spot.occupied)
+        .forEach(spot => occupiedSpots.push(spot));
+    }
+  });
+
+  // Return a random occupied spot or null if none found
+  return occupiedSpots.length > 0 
+    ? occupiedSpots[Math.floor(Math.random() * occupiedSpots.length)]
+    : null;
+};
+
 const FloorButton = ({ 
   floor, 
   isSelected = false,
@@ -96,6 +122,7 @@ const FloorButton = ({
   isSelected?: boolean,
   onPress: () => void
 }) => {
+  const { t } = useTranslation();
   const occupancyPercentage = (floor.occupied / floor.capacity) * 100;
   
   // Calculate color based on occupancy
@@ -143,7 +170,7 @@ const FloorButton = ({
       <Text style={[
         styles.capacityText,
         isSelected && styles.capacityTextSelected
-      ]}>{`${Math.round(occupancyPercentage)}% dolu`}</Text>
+      ]}>{t('findParking.occupancyPercentage', { percentage: Math.round(occupancyPercentage) })}</Text>
     </TouchableOpacity>
   );
 };
@@ -162,86 +189,119 @@ const MallInfoModal = ({
   mallInfo: MallInfo;
   currentLevel: number | string;
   onFloorSelect: (floorNumber: number | string) => void;
-}) => (
-  <Modal
-    visible={visible}
-    animationType="slide"
-    transparent={true}
-  >
-    <View style={styles.mallInfoContainer}>
-      <View style={styles.mallInfoContent}>
-        <View style={styles.modalHandle} />
-        
-        {/* Mall Info Section */}
-        <View style={styles.mallHeaderSection}>
-          <Text style={styles.mallName}>{mallInfo.name}</Text>
-          <View style={styles.mallDetailsRow}>
-            <MaterialIcons name="access-time" size={16} color="#666" />
-            <Text style={styles.mallDetailText}>{mallInfo.openHours}</Text>
-          </View>
-          <View style={styles.mallDetailsRow}>
-            <MaterialIcons name="location-on" size={16} color="#666" />
-            <Text style={styles.mallDetailText}>{mallInfo.address}</Text>
-          </View>
-          <View style={styles.spotsSummary}>
-            <View style={styles.spotsSummaryItem}>
-              <Text style={styles.spotsNumber}>{mallInfo.availableSpots}</Text>
-              <Text style={styles.spotsLabel}>Boş</Text>
-            </View>
-            <View style={styles.spotsDivider} />
-            <View style={styles.spotsSummaryItem}>
-              <Text style={styles.spotsNumber}>{mallInfo.totalSpots}</Text>
-              <Text style={styles.spotsLabel}>Toplam</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Floor Selection Section */}
-        <View style={styles.floorSectionContainer}>
-          <Text style={styles.floorSectionTitle}>Katlar</Text>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.floorsScrollContainer}
-          >
-            {floors.map((floor) => (
-              <View key={floor.floorNumber}>
-                <FloorButton 
-                  floor={floor} 
-                  isSelected={floor.floorNumber === currentLevel}
-                  onPress={() => {
-                    onFloorSelect(floor.floorNumber);
-                  }}
-                />
-              </View>
-            ))}
-          </ScrollView>
-        </View>
-
-        <TouchableOpacity 
-          style={styles.closeButton}
-          onPress={onClose}
-        >
-          <Text style={styles.closeButtonText}>Tamam</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </Modal>
-);
-
-const SearchBar = ({ onPress, visible }: { onPress: () => void, visible: boolean }) => (
-  visible ? (
-    <TouchableOpacity 
-      style={styles.searchBarContainer}
-      onPress={onPress}
+}) => {
+  const { t } = useTranslation();
+  
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent={true}
     >
-      <View style={styles.searchBar}>
-        <MaterialIcons name="search" size={24} color="#666" />
-        <Text style={styles.searchPlaceholder}>Park yeri ara...</Text>
+      <View style={styles.mallInfoContainer}>
+        <View style={styles.mallInfoContent}>
+          <View style={styles.modalHandle} />
+          
+          {/* Mall Info Section */}
+          <View style={styles.mallHeaderSection}>
+            <Text style={styles.mallName}>{mallInfo.name}</Text>
+            <View style={styles.mallDetailsRow}>
+              <MaterialIcons name="access-time" size={16} color="#666" />
+              <Text style={styles.mallDetailText}>{mallInfo.openHours}</Text>
+            </View>
+            <View style={styles.mallDetailsRow}>
+              <MaterialIcons name="location-on" size={16} color="#666" />
+              <Text style={styles.mallDetailText}>{mallInfo.address}</Text>
+            </View>
+            <View style={styles.spotsSummary}>
+              <View style={styles.spotsSummaryItem}>
+                <Text style={styles.spotsNumber}>{mallInfo.availableSpots}</Text>
+                <Text style={styles.spotsLabel}>{t('findParking.available')}</Text>
+              </View>
+              <View style={styles.spotsDivider} />
+              <View style={styles.spotsSummaryItem}>
+                <Text style={styles.spotsNumber}>{mallInfo.totalSpots}</Text>
+                <Text style={styles.spotsLabel}>{t('findParking.total')}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Floor Selection Section */}
+          <View style={styles.floorSectionContainer}>
+            <Text style={styles.floorSectionTitle}>{t('findParking.floors')}</Text>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.floorsScrollContainer}
+            >
+              {floors.map((floor) => (
+                <View key={floor.floorNumber}>
+                  <FloorButton 
+                    floor={floor} 
+                    isSelected={floor.floorNumber === currentLevel}
+                    onPress={() => {
+                      onFloorSelect(floor.floorNumber);
+                    }}
+                  />
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+
+          <TouchableOpacity 
+            style={styles.closeButton}
+            onPress={onClose}
+          >
+            <Text style={styles.closeButtonText}>{t('common.ok')}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </TouchableOpacity>
-  ) : null
-);
+    </Modal>
+  );
+};
+
+const SearchBar = ({ 
+  onPress, 
+  visible, 
+  onFindMyCar, 
+  onFindEmptySpot,
+  isCarParked 
+}: { 
+  onPress: () => void, 
+  visible: boolean,
+  onFindMyCar?: () => void,
+  onFindEmptySpot?: () => void,
+  isCarParked: boolean
+}) => {
+  const { t } = useTranslation();
+  
+  return visible ? (
+    <View style={styles.searchBarWrapper}>
+      <TouchableOpacity 
+        style={[styles.findMyCarButton, !isCarParked && styles.findEmptySpotButton]}
+        onPress={isCarParked ? onFindMyCar : onFindEmptySpot}
+      >
+        <MaterialIcons 
+          name={isCarParked ? "directions-car" : "local-parking"} 
+          size={20} 
+          color="white" 
+        />
+        <Text style={styles.findMyCarText}>
+          {isCarParked ? t('findParking.goToCar') : t('home.menu.findParking')}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.searchBarContainer}
+        onPress={onPress}
+      >
+        <View style={styles.searchBar}>
+          <MaterialIcons name="search" size={24} color="#666" />
+          <Text style={styles.searchPlaceholder}>{t('findParking.searchPlaceholder')}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  ) : null;
+};
 
 const MapControls = () => (
   <View style={styles.mapControls}>
@@ -258,12 +318,16 @@ const RoutePreview = ({
   distance, 
   estimatedTime, 
   onStartNavigation, 
-  onCancel 
+  onCancel,
+  floorNumber,
+  spotId
 }: { 
   distance: number;
   estimatedTime: number;
   onStartNavigation: () => void;
   onCancel: () => void;
+  floorNumber: number | string;
+  spotId: string;
 }) => (
   <View style={styles.routePreviewContainer}>
     <View style={styles.routePreviewHeader}>
@@ -273,6 +337,11 @@ const RoutePreview = ({
       <View style={styles.routeInfo}>
         <Text style={styles.routeDistance}>{distance}m</Text>
         <Text style={styles.routeTime}>{estimatedTime} saniye</Text>
+        <View style={styles.spotInfo}>
+          <Text style={styles.spotInfoText}>
+            Kat {floorNumber} • Park Yeri {spotId}
+          </Text>
+        </View>
       </View>
     </View>
     <TouchableOpacity 
@@ -311,30 +380,126 @@ const ArrivalPanel = ({ onClose }: { onClose: () => void }) => (
   </View>
 );
 
-const Header = ({ mallInfo }: { mallInfo: MallInfo | null }) => (
-  <View style={[styles.headerContainer, { backgroundColor: '#1C0CCE' }]}>
-    <View style={styles.headerContent}>
-      <TouchableOpacity 
-        style={styles.headerButton}
-        onPress={() => router.back()}
-      >
-        <MaterialIcons name="arrow-back" size={24} color="white" />
-      </TouchableOpacity>
-      <View style={styles.headerCenter}>
-        <Text style={[styles.headerTitle, { color: 'white' }]}>Forum İstanbul</Text>
-        <View style={[styles.headerBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-          <MaterialIcons name="local-parking" size={16} color="white" />
-          <Text style={[styles.headerBadgeText, { color: 'white' }]}>85 Boş Park Yeri</Text>
+const Header = ({ mallInfo }: { mallInfo: MallInfo | null }) => {
+  const { t } = useTranslation();
+  
+  return (
+    <View style={[styles.headerContainer, { backgroundColor: '#1C0CCE' }]}>
+      <View style={styles.headerContent}>
+        <TouchableOpacity 
+          style={styles.headerButton}
+          onPress={() => router.back()}
+        >
+          <MaterialIcons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <Text style={[styles.headerTitle, { color: 'white' }]}>{mallInfo?.name}</Text>
+          <View style={[styles.headerBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+            <MaterialIcons name="local-parking" size={16} color="white" />
+            <Text style={[styles.headerBadgeText, { color: 'white' }]}>
+              {t('findParking.availableSpots', { count: mallInfo?.availableSpots || 0 })}
+            </Text>
+          </View>
         </View>
+        <TouchableOpacity style={styles.headerButton}>
+          <MaterialIcons name="notifications-none" size={24} color="white" />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.headerButton}>
-        <MaterialIcons name="notifications-none" size={24} color="white" />
-      </TouchableOpacity>
     </View>
-  </View>
-);
+  );
+};
+
+const StairMarker = ({ stair }: { stair: StairMarker }) => {
+  return (
+    <View
+      style={[
+        styles.stairMarker,
+        {
+          left: `${(stair.x / GRID_SIZE) * 100}%`,
+          top: `${(stair.y / GRID_SIZE) * 100}%`,
+          zIndex: 1000,
+        },
+      ]}
+    >
+      <MaterialIcons name="stairs" size={24} color="#5C6BC0" />
+    </View>
+  );
+};
+
+const ParkingSection = ({ 
+  section, 
+  onSpotPress 
+}: { 
+  section: ParkingSection;
+  onSpotPress: (spotId: string) => void;
+}) => {
+  const { bounds, spots, title, color, markers } = section;
+  
+  return (
+    <>
+      {/* Section Background */}
+      <View
+        style={[
+          styles.section,
+          {
+            left: `${(bounds.x / GRID_SIZE) * 100}%`,
+            top: `${(bounds.y / GRID_SIZE) * 100}%`,
+            width: `${(bounds.width / GRID_SIZE) * 100}%`,
+            height: `${(bounds.height / GRID_SIZE) * 100}%`,
+            backgroundColor: color,
+          },
+        ]}
+      />
+      
+      {/* Section Title */}
+      <View
+        style={[
+          styles.sectionTitleContainer,
+          {
+            left: `${(bounds.x / GRID_SIZE) * 100}%`,
+            top: `${((bounds.y - 0.8) / GRID_SIZE) * 100}%`,
+            width: `${(bounds.width / GRID_SIZE) * 100}%`,
+          },
+        ]}
+      >
+        <Text style={styles.sectionTitle}>{title}</Text>
+      </View>
+
+      {/* Render spots if they exist */}
+      {spots?.map((spot) => (
+        <Pressable
+          key={spot.id}
+          style={({ pressed }) => [
+            styles.spot,
+            spot.occupied ? styles.occupied : styles.available,
+            {
+              left: `${(spot.x / GRID_SIZE) * 100}%`,
+              top: `${(spot.y / GRID_SIZE) * 100}%`,
+              width: `${(1 / GRID_SIZE) * 100}%`,
+              height: `${(1 / GRID_SIZE) * 100}%`,
+              transform: [{ scale: pressed ? 0.95 : 1 }],
+              opacity: pressed ? 0.9 : 1,
+            },
+          ]}
+          onPress={() => onSpotPress(spot.id)}
+        >
+          <Text style={styles.spotText}>{spot.id}</Text>
+        </Pressable>
+      ))}
+      
+      {/* Render stairs if present */}
+      {markers?.stairs?.map((stair) => (
+        <StairMarker key={stair.id} stair={stair} />
+      ))}
+    </>
+  );
+};
 
 export default function MapScreen() {
+  const { isCarParked: isCarParkedParam } = useLocalSearchParams<{ isCarParked?: string }>();
+  // Convert string param to boolean
+  const isCarParked = isCarParkedParam === 'true';
+
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedSpot, setSelectedSpot] = useState<string | null>(null);
   const translateX = useSharedValue(INITIAL_X);
@@ -359,6 +524,11 @@ export default function MapScreen() {
   const [floorData, setFloorData] = useState<FloorData[]>([]);
   const [parkingData, setParkingData] = useState<ParkingDataType>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [userCurrentFloor, setUserCurrentFloor] = useState(1);
+  const [navigationPhase, setNavigationPhase] = useState<'to-entrance' | 'change-floor' | 'to-spot' | null>(null);
+  const [targetFloor, setTargetFloor] = useState<number | null>(null);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -502,81 +672,6 @@ export default function MapScreen() {
     );
   };
 
-  const ParkingSection = ({ 
-    section, 
-    onSpotPress 
-  }: { 
-    section: ParkingSection;
-    onSpotPress: (spotId: string) => void;
-  }) => {
-    const { bounds, spots, title, color } = section;
-    
-    return (
-      <>
-        {/* Section Background with inner shadow effect */}
-        <View
-          style={[
-            styles.section,
-            {
-              left: `${(bounds.x / GRID_SIZE) * 100}%`,
-              top: `${(bounds.y / GRID_SIZE) * 100}%`,
-              width: `${(bounds.width / GRID_SIZE) * 100}%`,
-              height: `${(bounds.height / GRID_SIZE) * 100}%`,
-              backgroundColor: color,
-            },
-          ]}
-        >
-          {/* Add subtle gradient overlay */}
-          <View style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: 16,
-          }} />
-        </View>
-        
-        {/* Section Title with floating effect */}
-        <View
-          style={[
-            styles.sectionTitleContainer,
-            {
-              left: `${(bounds.x / GRID_SIZE) * 100}%`,
-              top: `${((bounds.y - 0.8) / GRID_SIZE) * 100}%`,
-              width: `${(bounds.width / GRID_SIZE) * 100}%`,
-            },
-          ]}
-        >
-          <Text style={styles.sectionTitle}>{title}</Text>
-        </View>
-
-        {/* Individual Parking Spots with press animation */}
-        {spots !== undefined && spots.map((spot) => (
-          <Pressable
-            key={spot.id}
-            style={({ pressed }) => [
-              styles.spot,
-              spot.occupied ? styles.occupied : styles.available,
-              {
-                left: `${(spot.x / GRID_SIZE) * 100}%`,
-                top: `${(spot.y / GRID_SIZE) * 100}%`,
-                width: `${(1 / GRID_SIZE) * 100}%`,
-                height: `${(1 / GRID_SIZE) * 100}%`,
-                transform: [{ scale: pressed ? 0.95 : 1 }],
-                opacity: pressed ? 0.9 : 1,
-              },
-            ]}
-            onPress={() => onSpotPress(spot.id)}
-          >
-            <Text style={styles.spotText}>{spot.id}</Text>
-          </Pressable>
-        ))}
-      </>
-    );
-  };
-
   const getNeighbors = (point: Point): Point[] => {
     const directions = [
       { x: 0, y: 1 }, { x: 1, y: 0 },
@@ -665,112 +760,154 @@ export default function MapScreen() {
     console.log('Spot selected:', spotId);
     setSelectedSpot(spotId);
     
-    Object.entries(parkingData[currentLevel].sections).forEach(([_, section]) => {
-      // Skip sections without spots (like entrance/exit markers)
-      if (!section.spots || section.isMarker) {
-        return;
-      }
+    let targetSpot: ParkingSpot | null = null;
+    const targetFloor = currentLevel;
 
+    // Find the target spot
+    Object.entries(parkingData[currentLevel].sections).forEach(([_, section]) => {
+      if (!section.spots || section.isMarker) return;
+      
       const spot = section.spots.find((s) => s.id === spotId);
       if (spot) {
-        // Use the exact spot coordinates instead of calculating from index
-        const targetX = spot.x;
-        const targetY = spot.y;
-        
-        const path = findPath(
-          userPosition, 
-          { x: targetX, y: targetY }, 
-          parkingData[currentLevel].sections, 
-          section
+        targetSpot = spot;
+      }
+    });
+
+    if (!targetSpot) return;
+
+    // Switch to user's current floor when starting navigation
+    setCurrentLevel(userCurrentFloor);
+
+    if (targetFloor === userCurrentFloor) {
+      // Same floor - direct navigation
+      const path = findPath(
+        userPosition,
+        { x: targetSpot.x, y: targetSpot.y },
+        parkingData[userCurrentFloor].sections
+      );
+      
+      if (path) {
+        setPendingPath(path);
+        setNavigationPath(path);
+        setNavigationPhase('to-spot');
+        zoomToShowPath();
+        setShowingRoutePreview(true);
+      }
+    } else {
+      // Different floor - find nearest stairs
+      let stairs: StairMarker | null = null;
+      Object.values(parkingData[userCurrentFloor].sections).forEach(section => {
+        if (section.markers?.stairs) {
+          stairs = section.markers.stairs[0];
+        }
+      });
+
+      if (stairs) {
+        const pathToStairs = findPath(
+          userPosition,
+          { x: stairs.x, y: stairs.y },
+          parkingData[userCurrentFloor].sections
         );
         
-        if (path) {
-          setPendingPath(path);
-          setNavigationPath(path);
+        if (pathToStairs) {
+          setPendingPath(pathToStairs);
+          setNavigationPath(pathToStairs);
+          setNavigationPhase('to-stairs');
+          setTargetFloor(targetFloor);
           zoomToShowPath();
           setShowingRoutePreview(true);
         }
       }
-    });
+    }
   };
 
-  const UserMarker = () => (
-    <View
-      style={[
-        styles.userMarker,
-        {
-          left: `${(userPosition.x / GRID_SIZE) * 100}%`,
-          top: `${(userPosition.y / GRID_SIZE) * 100}%`,
-          zIndex: 1000,
-        },
-      ]}
-    />
-  );
+  const UserMarker = () => {
+    // Only render user marker if we're viewing their current floor
+    if (currentLevel !== userCurrentFloor) return null;
 
-  const NavigationPath = () => (
-    <>
-      {/* Draw path lines between points */}
-      {navigationPath.map((point, index) => {
-        if (index === navigationPath.length - 1) return null;
-        
-        const nextPoint = navigationPath[index + 1];
-        const x1 = (point.x / GRID_SIZE) * 100;
-        const y1 = (point.y / GRID_SIZE) * 100;
-        const x2 = (nextPoint.x / GRID_SIZE) * 100;
-        const y2 = (nextPoint.y / GRID_SIZE) * 100;
-        
-        // Calculate line dimensions and position
-        const isHorizontal = y1 === y2;
-        const width = isHorizontal ? Math.abs(x2 - x1) : 0.2; // Thinner lines
-        const height = isHorizontal ? 0.2 : Math.abs(y2 - y1); // Thinner lines
-        
-        // Calculate the correct position for the line
-        const left = isHorizontal ? Math.min(x1, x2) : x1;
-        const top = isHorizontal ? y1 : Math.min(y1, y2);
-        
-        return (
+    return (
+      <View
+        style={[
+          styles.userMarker,
+          {
+            left: `${(userPosition.x / GRID_SIZE) * 100}%`,
+            top: `${(userPosition.y / GRID_SIZE) * 100}%`,
+            zIndex: 1000,
+          },
+        ]}
+      />
+    );
+  };
+
+  const NavigationPath = () => {
+    // Only show navigation path on user's current floor
+    if (currentLevel !== userCurrentFloor) return null;
+
+    return (
+      <>
+        {/* Draw path lines between points */}
+        {navigationPath.map((point, index) => {
+          if (index === navigationPath.length - 1) return null;
+          
+          const nextPoint = navigationPath[index + 1];
+          const x1 = (point.x / GRID_SIZE) * 100;
+          const y1 = (point.y / GRID_SIZE) * 100;
+          const x2 = (nextPoint.x / GRID_SIZE) * 100;
+          const y2 = (nextPoint.y / GRID_SIZE) * 100;
+          
+          // Calculate line dimensions and position
+          const isHorizontal = y1 === y2;
+          const width = isHorizontal ? Math.abs(x2 - x1) : 0.2; // Thinner lines
+          const height = isHorizontal ? 0.2 : Math.abs(y2 - y1); // Thinner lines
+          
+          // Calculate the correct position for the line
+          const left = isHorizontal ? Math.min(x1, x2) : x1;
+          const top = isHorizontal ? y1 : Math.min(y1, y2);
+          
+          return (
+            <View
+              key={`line-${index}`}
+              style={[
+                styles.pathLine,
+                {
+                  left: `${left}%`,
+                  top: `${top}%`,
+                  width: `${width}%`,
+                  height: `${height}%`,
+                  transform: [
+                    { translateX: isHorizontal ? 0 : -0.1 }, // Adjust for thinner lines
+                    { translateY: isHorizontal ? -0.1 : 0 }  // Adjust for thinner lines
+                  ],
+                  zIndex: 999,
+                }
+              ]}
+            />
+          );
+        })}
+
+        {/* Draw all path points */}
+        {navigationPath.map((point, index) => (
           <View
-            key={`line-${index}`}
+            key={`point-${index}`}
             style={[
-              styles.pathLine,
+              styles.pathPoint,
               {
-                left: `${left}%`,
-                top: `${top}%`,
-                width: `${width}%`,
-                height: `${height}%`,
+                left: `${(point.x / GRID_SIZE) * 100}%`,
+                top: `${(point.y / GRID_SIZE) * 100}%`,
+                width: index === navigationPath.length - 1 ? 12 : 6, // Smaller points
+                height: index === navigationPath.length - 1 ? 12 : 6, // Smaller points
                 transform: [
-                  { translateX: isHorizontal ? 0 : -0.1 }, // Adjust for thinner lines
-                  { translateY: isHorizontal ? -0.1 : 0 }  // Adjust for thinner lines
+                  { translateX: index === navigationPath.length - 1 ? -6 : -3 },
+                  { translateY: index === navigationPath.length - 1 ? -6 : -3 }
                 ],
-                zIndex: 999,
-              }
+                zIndex: 1000,
+              },
             ]}
           />
-        );
-      })}
-
-      {/* Draw all path points */}
-      {navigationPath.map((point, index) => (
-        <View
-          key={`point-${index}`}
-          style={[
-            styles.pathPoint,
-            {
-              left: `${(point.x / GRID_SIZE) * 100}%`,
-              top: `${(point.y / GRID_SIZE) * 100}%`,
-              width: index === navigationPath.length - 1 ? 12 : 6, // Smaller points
-              height: index === navigationPath.length - 1 ? 12 : 6, // Smaller points
-              transform: [
-                { translateX: index === navigationPath.length - 1 ? -6 : -3 },
-                { translateY: index === navigationPath.length - 1 ? -6 : -3 }
-              ],
-              zIndex: 1000,
-            },
-          ]}
-        />
-      ))}
-    </>
-  );
+        ))}
+      </>
+    );
+  };
 
   const zoomToUser = () => {
     scale.value = 1.2;
@@ -866,6 +1003,22 @@ export default function MapScreen() {
       ? getDirection(navigationPath[currentPathIndex], navigationPath[currentPathIndex + 1])
       : null;
 
+    const getNavigationMessage = () => {
+      if (navigationPhase === 'to-stairs') {
+        return t('navigation.headToStairs', { floor: targetFloor });
+      } else if (navigationPhase === 'change-floor') {
+        return t('navigation.takeStairs', { floor: targetFloor });
+      } else if (navigationPhase === 'to-spot') {
+        if (userCurrentFloor !== currentLevel) {
+          return t('navigation.headToDestination', { floor: currentLevel });
+        }
+        return remainingDistance > 0 
+          ? t('navigation.remainingDistance', { distance: remainingDistance })
+          : t('navigation.arrived');
+      }
+      return '';
+    };
+
     return (
       <View style={styles.navigationPanelContainer}>
         <View style={styles.navigationPanel}>
@@ -922,6 +1075,7 @@ export default function MapScreen() {
               />
             </View>
           </View>
+          <Text style={styles.navigationMessage}>{getNavigationMessage()}</Text>
         </View>
       </View>
     );
@@ -972,27 +1126,147 @@ export default function MapScreen() {
       
       return () => clearTimeout(moveTimeout);
     } else if (isNavigating && currentPathIndex === navigationPath.length - 1) {
-      setIsNavigating(false);
-      setCurrentInstruction(null);
-      setRemainingDistance(0);
-      setRemainingTime(0);
-      setShowArrivalModal(true);
+      if (navigationPhase === 'to-stairs') {
+        // At stairs - simulate floor change after delay
+        setTimeout(() => {
+          // Change user's floor and position
+          setUserCurrentFloor(targetFloor!);
+          // Switch map view to new floor
+          setCurrentLevel(targetFloor!);
+          
+          // Find stairs on the new floor
+          let stairs: StairMarker | null = null;
+          Object.values(parkingData[targetFloor!].sections).forEach(section => {
+            if (section.markers?.stairs && section.markers.stairs.length > 0) {
+              stairs = section.markers.stairs[0];
+            }
+          });
+          
+          // Set user position to stairs
+          setUserPosition({ x: stairs?.x || 0, y: stairs?.y || 0 });
+          
+          // Find target spot
+          let targetSpot = null;
+          Object.values(parkingData[targetFloor!].sections).forEach(section => {
+            if (!section.spots || section.isMarker) return;
+            const spot = section.spots.find(s => s.id === selectedSpot);
+            if (spot) targetSpot = spot;
+          });
+
+          if (targetSpot) {
+            const pathToSpot = findPath(
+              { x: stairs?.x || 0, y: stairs?.y || 0 },
+              { x: targetSpot.x, y: targetSpot.y },
+              parkingData[targetFloor!].sections
+            );
+            
+            if (pathToSpot) {
+              setPendingPath(pathToSpot);
+              setNavigationPath(pathToSpot);
+              setCurrentPathIndex(0);
+              setNavigationPhase('to-spot');
+              setTargetFloor(null); // Clear target floor as we've reached it
+              return;
+            }
+          }
+        }, 2000);
+      } else if (navigationPhase === 'to-spot') {
+        setIsNavigating(false);
+        setCurrentInstruction(null);
+        setRemainingDistance(0);
+        setRemainingTime(0);
+        setShowArrivalModal(true);
+        setNavigationPhase(null);
+        setTargetFloor(null);
+      }
     }
-  }, [isNavigating, currentPathIndex, navigationPath]);
+  }, [isNavigating, currentPathIndex, navigationPath, navigationPhase]);
 
   const handleFloorSelect = (floorNumber: number | string) => {
-    setCurrentLevel(typeof floorNumber === 'string' ? parseInt(floorNumber) : floorNumber);
+    const newLevel = typeof floorNumber === 'string' ? parseInt(floorNumber) : floorNumber;
+    setCurrentLevel(newLevel);
+    
     // Reset map position when changing floors
     translateX.value = withSpring(INITIAL_X);
     translateY.value = withSpring(INITIAL_Y);
     scale.value = withSpring(INITIAL_SCALE);
     savedScale.value = INITIAL_SCALE;
     
-    // Clear any active navigation
+    // Clear any active navigation but DON'T change user's floor
     setNavigationPath([]);
     setIsNavigating(false);
     setShowingRoutePreview(false);
     setSelectedSpot(null);
+  };
+
+  const handleFindMyCar = () => {
+    const randomSpot = getRandomSpot(parkingData, currentLevel);
+    
+    if (randomSpot) {
+      handleSpotSelection(randomSpot.id);
+    } else {
+      Alert.alert(
+        t('findParking.noResults'),
+        t('activeParking.noActiveParking')
+      );
+    }
+  };
+
+  const findNearestEmptySpot = () => {
+    let nearestSpot: ParkingSpot | null = null;
+    let minDistance = Infinity;
+
+    // Search all floors
+    Object.entries(parkingData).forEach(([floorNum, floorData]) => {
+      Object.values(floorData.sections).forEach(section => {
+        if (!section.spots || section.isMarker) return;
+
+        section.spots.forEach(spot => {
+          if (!spot.occupied) {
+            // If on same floor, calculate direct distance
+            if (parseInt(floorNum) === userCurrentFloor) {
+              const distance = manhattanDistance(userPosition, { x: spot.x, y: spot.y });
+              if (distance < minDistance) {
+                minDistance = distance;
+                nearestSpot = spot;
+              }
+            } 
+            // If on different floor, prioritize spots near stairs
+            else {
+              let stairs = null;
+              Object.values(parkingData[userCurrentFloor].sections).forEach(s => {
+                if (s.markers?.stairs && s.markers.stairs.length > 0) {
+                  stairs = s.markers.stairs[0];
+                }
+              });
+
+              if (stairs) {
+                const distanceToStairs = manhattanDistance(userPosition, { x: stairs.x, y: stairs.y });
+                const distanceFromStairsToSpot = manhattanDistance(
+                  { x: stairs.x, y: stairs.y }, 
+                  { x: spot.x, y: spot.y }
+                );
+                const totalDistance = distanceToStairs + distanceFromStairsToSpot;
+
+                if (totalDistance < minDistance) {
+                  minDistance = totalDistance;
+                  nearestSpot = spot;
+                }
+              }
+            }
+          }
+        });
+      });
+    });
+
+    if (nearestSpot) {
+      handleSpotSelection(nearestSpot.id);
+    } else {
+      Alert.alert(
+        t('findParking.noResults'),
+        t('activeParking.noActiveParking')
+      );
+    }
   };
 
   return (
@@ -1009,6 +1283,9 @@ export default function MapScreen() {
             <SearchBar 
               onPress={() => setShowMallInfo(true)} 
               visible={!showingRoutePreview && !isNavigating && !showArrivalModal}
+              onFindMyCar={handleFindMyCar}
+              onFindEmptySpot={findNearestEmptySpot}
+              isCarParked={isCarParked}
             />
             {mallInfo && (
               <MallInfoModal
@@ -1048,6 +1325,8 @@ export default function MapScreen() {
               <RoutePreview
                 distance={pendingPath.length}
                 estimatedTime={pendingPath.length}
+                floorNumber={currentLevel}
+                spotId={selectedSpot || ''}
                 onStartNavigation={() => {
                   setShowingRoutePreview(false);
                   startNavigation();
@@ -1366,12 +1645,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 16,
   },
-  searchBarContainer: {
+  searchBarWrapper: {
     position: 'absolute',
     bottom: 24,
     left: 16,
     right: 16,
     zIndex: 1000,
+    gap: 12,
+  },
+  searchBarContainer: {
+    width: '100%',
   },
   searchBar: {
     backgroundColor: 'white',
@@ -1389,6 +1672,25 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     color: '#666',
     fontSize: 16,
+  },
+  findMyCarButton: {
+    backgroundColor: '#0066FF',
+    borderRadius: 24,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  findMyCarText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
   mapControls: {
     position: 'absolute',
@@ -1468,7 +1770,7 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 12,      "goToCar": "Go to Car",
     padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -1686,7 +1988,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1000,
-    paddingTop: 50, // Adjust based on safe area
+    paddingTop: 60, // Adjust based on safe area
     paddingHorizontal: 16,
     paddingBottom: 16,
     backgroundColor: 'white',
@@ -1750,5 +2052,47 @@ const styles = StyleSheet.create({
   floorsScrollContainer: {
     paddingBottom: 20,
     gap: 12,
+  },
+  spotInfo: {
+    marginTop: 4,
+    backgroundColor: '#E3F2FD',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  spotInfoText: {
+    color: '#1976D2',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  navigationMessage: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  stairMarker: {
+    position: 'absolute',
+    width: GRID_CELL_SIZE,
+    height: GRID_CELL_SIZE,
+    backgroundColor: '#E8EAF6',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#5C6BC0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    transform: [
+      { translateX: -GRID_CELL_SIZE / 2 },
+      { translateY: -GRID_CELL_SIZE / 2 }
+    ],
+  },
+  findEmptySpotButton: {
+    backgroundColor: '#4CAF50', // Different color for find empty spot
   },
 });

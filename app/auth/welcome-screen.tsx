@@ -73,7 +73,7 @@ export default function WelcomeScreen() {
                 {
                   translateY: starAnimation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, 480],
+                    outputRange: [0, 490],
                   }),
                 },
               ],
